@@ -1,4 +1,4 @@
-package com.nutrihealth.backend.NutritionalPlanning.domain.model.commands;
+package com.nutrihealth.backend.NutritionalPlanning.domain.model.commands.NutritionPlanCommands;
 
 import java.util.Date;
 import java.util.Optional;
