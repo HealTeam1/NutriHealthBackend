@@ -3,6 +3,7 @@ package com.nutrihealth.backend.NutritionalPlanning.domain.model.entity;
 import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 import com.nutrihealth.backend.NutritionalPlanning.domain.model.aggregates.NutritionalPlan;
+import com.nutrihealth.backend.NutritionalPlanning.domain.model.commands.DailyPlanCommands.UpdateDailyPlanCommand;
 import com.nutrihealth.backend.NutritionalPlanning.domain.model.valueobjects.WeekDay;
 import jakarta.persistence.*;
 import lombok.Getter;
@@ -16,7 +17,6 @@ import java.util.List;
 @Table(name = "daily_plans")
 @Getter
 @Setter
-@NoArgsConstructor
 public class DailyPlan {
 
     @Id
@@ -37,12 +37,12 @@ public class DailyPlan {
     @JsonManagedReference
     private List<ScheduledMeal> scheduledMeals;
 
+    protected DailyPlan() {}
     public DailyPlan(NutritionalPlan plan,WeekDay weekDay) {
         this.nutritionalPlan = plan;
         this.weekDay = weekDay;
         this.scheduledMeals = new ArrayList<>();
     }
-    protected DailyPlan() {}
 
 }
 

@@ -3,6 +3,8 @@ package com.nutrihealth.backend.NutritionalPlanning.application.internal.command
 import com.nutrihealth.backend.NutritionalPlanning.Infrastructure.persistence.jpa.repositories.NutritionalPlanRepository;
 import com.nutrihealth.backend.NutritionalPlanning.domain.model.aggregates.NutritionalPlan;
 import com.nutrihealth.backend.NutritionalPlanning.domain.model.commands.DailyPlanCommands.CreateDailyPlanCommand;
+import com.nutrihealth.backend.NutritionalPlanning.domain.model.commands.DailyPlanCommands.DeleteDailyPlanCommand;
+import com.nutrihealth.backend.NutritionalPlanning.domain.model.commands.DailyPlanCommands.UpdateDailyPlanCommand;
 import com.nutrihealth.backend.NutritionalPlanning.domain.model.commands.NutritionPlanCommands.CreateNutritionalPlanCommand;
 import com.nutrihealth.backend.NutritionalPlanning.domain.model.commands.NutritionPlanCommands.DeleteNutritionPlanByUserIdAndId;
 import com.nutrihealth.backend.NutritionalPlanning.domain.model.commands.NutritionPlanCommands.UpdateActiveNutritionPlanCommand;
@@ -67,6 +69,28 @@ public class NutritionalPlanCommandServiceImpl implements NutritionalPlanCommand
                 .orElseThrow(() -> new IllegalArgumentException("Plan no encontrado"));
         var dailyPlan = new DailyPlan(plan, command.weekDay());
         plan.addDailyPlan(dailyPlan);
+        repository.save(plan);
+        return Optional.of(dailyPlan);
+    }
+
+    @Override
+    public void handle(DeleteDailyPlanCommand command) {
+        var plan = repository.findByUserIdAndId(command.userId(), command.planId())
+                .orElseThrow(() -> new IllegalArgumentException("Plan no encontrado"));
+        plan.getDailyPlans().removeIf(dailyPlan -> dailyPlan.getId().equals(command.dailyPlanId()));
+        repository.save(plan);
+
+    }
+
+    @Override
+    public Optional<DailyPlan> handle(UpdateDailyPlanCommand command) {
+        var plan = repository.findByUserIdAndId(command.userId(), command.planId())
+                .orElseThrow(() -> new IllegalArgumentException("Plan no encontrado"));
+        var dailyPlan = plan.getDailyPlans().stream()
+                .filter(dp -> dp.getId().equals(command.dailyPlanId()))
+                .findFirst()
+                .orElseThrow(() -> new IllegalArgumentException("Dia no encontrado"));
+        dailyPlan.setWeekDay(command.weekDay());
         repository.save(plan);
         return Optional.of(dailyPlan);
     }

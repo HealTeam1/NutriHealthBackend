@@ -2,6 +2,8 @@ package com.nutrihealth.backend.NutritionalPlanning.domain.services;
 
 import com.nutrihealth.backend.NutritionalPlanning.domain.model.aggregates.NutritionalPlan;
 import com.nutrihealth.backend.NutritionalPlanning.domain.model.commands.DailyPlanCommands.CreateDailyPlanCommand;
+import com.nutrihealth.backend.NutritionalPlanning.domain.model.commands.DailyPlanCommands.DeleteDailyPlanCommand;
+import com.nutrihealth.backend.NutritionalPlanning.domain.model.commands.DailyPlanCommands.UpdateDailyPlanCommand;
 import com.nutrihealth.backend.NutritionalPlanning.domain.model.commands.NutritionPlanCommands.CreateNutritionalPlanCommand;
 import com.nutrihealth.backend.NutritionalPlanning.domain.model.commands.NutritionPlanCommands.DeleteNutritionPlanByUserIdAndId;
 import com.nutrihealth.backend.NutritionalPlanning.domain.model.commands.NutritionPlanCommands.UpdateActiveNutritionPlanCommand;
@@ -10,7 +12,6 @@ import com.nutrihealth.backend.NutritionalPlanning.domain.model.commands.Schedul
 import com.nutrihealth.backend.NutritionalPlanning.domain.model.entity.DailyPlan;
 import com.nutrihealth.backend.NutritionalPlanning.domain.model.entity.ScheduledMeal;
 
-import javax.swing.text.html.Option;
 import java.util.Optional;
 
 public interface NutritionalPlanCommandService {
@@ -19,6 +20,8 @@ public interface NutritionalPlanCommandService {
     Optional<NutritionalPlan> handle(UpdateActiveNutritionPlanCommand command);
     Optional<NutritionalPlan> handle(UpdateNutritionalPlanCommand command);
     Optional<DailyPlan> handle(CreateDailyPlanCommand command);
+    void handle(DeleteDailyPlanCommand command);
+    Optional<DailyPlan> handle(UpdateDailyPlanCommand command);
     Optional<ScheduledMeal> handle(CreateScheduledMealCommand command);
 
 }
