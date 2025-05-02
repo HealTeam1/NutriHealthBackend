@@ -9,6 +9,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Entity
@@ -36,8 +37,10 @@ public class DailyPlan {
     @JsonManagedReference
     private List<ScheduledMeal> scheduledMeals;
 
-    public DailyPlan(WeekDay weekDay) {
+    public DailyPlan(NutritionalPlan plan,WeekDay weekDay) {
+        this.nutritionalPlan = plan;
         this.weekDay = weekDay;
+        this.scheduledMeals = new ArrayList<>();
     }
     //protected DailyPlan() {}
     /*
