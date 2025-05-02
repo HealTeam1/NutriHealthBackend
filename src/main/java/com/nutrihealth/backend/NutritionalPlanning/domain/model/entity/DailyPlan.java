@@ -42,24 +42,7 @@ public class DailyPlan {
         this.weekDay = weekDay;
         this.scheduledMeals = new ArrayList<>();
     }
-    //protected DailyPlan() {}
-    /*
-    public void addScheduledMeal(ScheduledMeal meal) {
-        this.scheduledMeals.add(meal);
-        meal.setDailyPlan(this);
-    }
+    protected DailyPlan() {}
 
-    public void removeScheduledMeal(ScheduledMeal meal) {
-        this.scheduledMeals.remove(meal);
-        meal.setDailyPlan(null);
-    }
-
-    public int totalCalories() {
-        return scheduledMeals.stream()
-                .mapToInt(ScheduledMeal::totalCalories)
-                .sum();
-    }
-    (
-     */
 }
 
