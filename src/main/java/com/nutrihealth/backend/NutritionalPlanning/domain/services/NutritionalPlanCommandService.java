@@ -6,7 +6,9 @@ import com.nutrihealth.backend.NutritionalPlanning.domain.model.commands.Nutriti
 import com.nutrihealth.backend.NutritionalPlanning.domain.model.commands.NutritionPlanCommands.DeleteNutritionPlanByUserIdAndId;
 import com.nutrihealth.backend.NutritionalPlanning.domain.model.commands.NutritionPlanCommands.UpdateActiveNutritionPlanCommand;
 import com.nutrihealth.backend.NutritionalPlanning.domain.model.commands.NutritionPlanCommands.UpdateNutritionalPlanCommand;
+import com.nutrihealth.backend.NutritionalPlanning.domain.model.commands.ScheduledMealCommands.CreateScheduledMealCommand;
 import com.nutrihealth.backend.NutritionalPlanning.domain.model.entity.DailyPlan;
+import com.nutrihealth.backend.NutritionalPlanning.domain.model.entity.ScheduledMeal;
 
 import javax.swing.text.html.Option;
 import java.util.Optional;
@@ -17,5 +19,6 @@ public interface NutritionalPlanCommandService {
     Optional<NutritionalPlan> handle(UpdateActiveNutritionPlanCommand command);
     Optional<NutritionalPlan> handle(UpdateNutritionalPlanCommand command);
     Optional<DailyPlan> handle(CreateDailyPlanCommand command);
+    Optional<ScheduledMeal> handle(CreateScheduledMealCommand command);
 
 }

@@ -2,11 +2,13 @@ package com.nutrihealth.backend.NutritionalPlanning.domain.model.entity;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
+import com.nutrihealth.backend.NutritionalPlanning.domain.model.commands.ScheduledMealCommands.CreateScheduledMealCommand;
 import com.nutrihealth.backend.NutritionalPlanning.domain.model.valueobjects.TimeDay;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Entity
@@ -34,5 +36,12 @@ public class ScheduledMeal {
     @JsonManagedReference
     private List<PlannedFoods> plannedFoods;
 
-    //protected ScheduledMeal() {}
+    protected ScheduledMeal() {}
+
+    public ScheduledMeal(DailyPlan dailyPlan, CreateScheduledMealCommand command) {
+        this.dailyPlan = dailyPlan;
+        this.recipeId = command.recipeId();
+        this.timeDay = command.timeDay();
+        this.plannedFoods = new ArrayList<>();
+    }
 }
