@@ -1,7 +1,9 @@
 package com.nutrihealth.backend.NutritionalPlanning.domain.model.aggregates;
 
 import com.fasterxml.jackson.annotation.JsonManagedReference;
-import com.nutrihealth.backend.NutritionalPlanning.domain.model.commands.CreateNutritionalPlanCommand;
+import com.nutrihealth.backend.NutritionalPlanning.domain.model.commands.NutritionPlanCommands.CreateNutritionalPlanCommand;
+import com.nutrihealth.backend.NutritionalPlanning.domain.model.commands.NutritionPlanCommands.UpdateActiveNutritionPlanCommand;
+import com.nutrihealth.backend.NutritionalPlanning.domain.model.commands.NutritionPlanCommands.UpdateNutritionalPlanCommand;
 import com.nutrihealth.backend.NutritionalPlanning.domain.model.entity.DailyPlan;
 import com.nutrihealth.backend.NutritionalPlanning.domain.model.valueobjects.WeekDay;
 import com.nutrihealth.backend.shared.domain.model.aggregates.AuditableAbstractAggregateRoot;
@@ -48,8 +50,22 @@ public class NutritionalPlan extends AuditableAbstractAggregateRoot<NutritionalP
         this.name = command.name();
         this.description = command.description().orElse(null);
         this.active = command.active();
+        this.dailyPlans = new ArrayList<>();
     }
 
+
+    public DailyPlan getDailyPlanByWeekDay(WeekDay weekDay){
+        return this.dailyPlans.stream()
+                .filter(dailyPlan -> dailyPlan.getWeekDay().equals(weekDay))
+                .findFirst()
+                .orElse(null);
+    }
+    public void updateNutritionPlan(UpdateNutritionalPlanCommand command){
+        this.startDate = command.startDate();
+        this.name= command.name();
+        this.active = command.active();
+        this.description = command.description();
+    }
 
     public void addDailyPlan(DailyPlan dailyPlan){
         dailyPlan.setNutritionalPlan(this);
