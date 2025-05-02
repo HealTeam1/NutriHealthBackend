@@ -13,4 +13,5 @@ public interface NutritionalPlanRepository extends JpaRepository<NutritionalPlan
     Optional<NutritionalPlan> findByUserIdAndId(Long userId, Long planId);
 
 
+
 }
