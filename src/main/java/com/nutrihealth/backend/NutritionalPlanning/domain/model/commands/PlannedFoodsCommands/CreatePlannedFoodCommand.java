@@ -1,13 +1,16 @@
-package com.nutrihealth.backend.NutritionalPlanning.domain.model.commands.ScheduledMealCommands;
+package com.nutrihealth.backend.NutritionalPlanning.domain.model.commands.PlannedFoodsCommands;
 
 import com.nutrihealth.backend.NutritionalPlanning.domain.model.valueobjects.TimeDay;
+import com.nutrihealth.backend.NutritionalPlanning.domain.model.valueobjects.Unit;
 import com.nutrihealth.backend.NutritionalPlanning.domain.model.valueobjects.WeekDay;
 
-public record CreateScheduledMealCommand(
+public record CreatePlannedFoodCommand(
         Long userId,
         Long planId,
+        Integer amount,
+        Unit unit,
         WeekDay weekDay,
-        Long recipeId,
         TimeDay timeDay
 ) {
+
 }

@@ -1,6 +1,7 @@
 package com.nutrihealth.backend.NutritionalPlanning.domain.model.entity;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.nutrihealth.backend.NutritionalPlanning.domain.model.commands.PlannedFoodsCommands.CreatePlannedFoodCommand;
 import com.nutrihealth.backend.NutritionalPlanning.domain.model.valueobjects.Unit;
 import jakarta.persistence.*;
 import lombok.Getter;
@@ -9,7 +10,7 @@ import lombok.Setter;
 @Entity
 @Getter
 @Setter
-public class PlannedFoods {
+public class PlannedFood {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -26,5 +27,13 @@ public class PlannedFoods {
     @Enumerated(EnumType.STRING)
     private Unit unit;
 
-    //protected PlannedFoods() {}
+    protected PlannedFood() {}
+
+    public PlannedFood(CreatePlannedFoodCommand command){
+        this.amount = command.amount();
+        this.unit = command.unit();
+    }
+
+
+
 }

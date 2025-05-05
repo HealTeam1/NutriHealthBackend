@@ -34,14 +34,17 @@ public class ScheduledMeal {
 
     @OneToMany(mappedBy = "scheduledMeal", cascade = CascadeType.ALL, fetch = FetchType.LAZY, orphanRemoval = true)
     @JsonManagedReference
-    private List<PlannedFoods> plannedFoods;
+    private List<PlannedFood> plannedFoods;
 
     protected ScheduledMeal() {}
 
-    public ScheduledMeal(DailyPlan dailyPlan, CreateScheduledMealCommand command) {
-        this.dailyPlan = dailyPlan;
-        this.recipeId = command.recipeId();
+    public ScheduledMeal(CreateScheduledMealCommand command) {
+        this.recipeId = command.recipeId() == null ? null : command.recipeId();
         this.timeDay = command.timeDay();
         this.plannedFoods = new ArrayList<>();
+    }
+    public void addPlannedFood(PlannedFood plannedFood){
+        plannedFood.setScheduledMeal(this);
+        this.plannedFoods.add(plannedFood);
     }
 }

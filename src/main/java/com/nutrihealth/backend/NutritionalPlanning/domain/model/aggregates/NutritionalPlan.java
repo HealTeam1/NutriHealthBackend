@@ -2,7 +2,6 @@ package com.nutrihealth.backend.NutritionalPlanning.domain.model.aggregates;
 
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 import com.nutrihealth.backend.NutritionalPlanning.domain.model.commands.NutritionPlanCommands.CreateNutritionalPlanCommand;
-import com.nutrihealth.backend.NutritionalPlanning.domain.model.commands.NutritionPlanCommands.UpdateActiveNutritionPlanCommand;
 import com.nutrihealth.backend.NutritionalPlanning.domain.model.commands.NutritionPlanCommands.UpdateNutritionalPlanCommand;
 import com.nutrihealth.backend.NutritionalPlanning.domain.model.entity.DailyPlan;
 import com.nutrihealth.backend.NutritionalPlanning.domain.model.valueobjects.WeekDay;
@@ -65,11 +64,22 @@ public class NutritionalPlan extends AuditableAbstractAggregateRoot<NutritionalP
         this.name= command.name();
         this.active = command.active();
         this.description = command.description();
+        this.dailyPlans = command.dailyPlans() == null ? this.dailyPlans : command.dailyPlans();
     }
 
     public void addDailyPlan(DailyPlan dailyPlan){
         dailyPlan.setNutritionalPlan(this);
         this.dailyPlans.add(dailyPlan);
+    }
+    public DailyPlan getDailyPlan(WeekDay weekDay){
+        return this.dailyPlans
+                .stream()
+                .filter(dp->dp.getWeekDay().equals(weekDay))
+                .findFirst()
+                .orElseThrow(()->new IllegalArgumentException("Daily Plan not found"));
+    }
+    public void deleteDailyPlan(WeekDay weekDay){
+        this.dailyPlans.removeIf(dp->dp.getWeekDay().equals(weekDay));
     }
 
 }

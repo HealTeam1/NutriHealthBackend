@@ -4,18 +4,24 @@ import com.nutrihealth.backend.NutritionalPlanning.application.internal.commands
 import com.nutrihealth.backend.NutritionalPlanning.application.internal.queryservices.NutritionalPlanQueryServiceImpl;
 import com.nutrihealth.backend.NutritionalPlanning.domain.model.aggregates.NutritionalPlan;
 import com.nutrihealth.backend.NutritionalPlanning.domain.model.commands.DailyPlanCommands.CreateDailyPlanCommand;
+import com.nutrihealth.backend.NutritionalPlanning.domain.model.commands.DailyPlanCommands.DeleteDailyPlanCommand;
+import com.nutrihealth.backend.NutritionalPlanning.domain.model.commands.DailyPlanCommands.UpdateDailyPlanCommand;
 import com.nutrihealth.backend.NutritionalPlanning.domain.model.commands.NutritionPlanCommands.CreateNutritionalPlanCommand;
 import com.nutrihealth.backend.NutritionalPlanning.domain.model.commands.NutritionPlanCommands.DeleteNutritionPlanByUserIdAndId;
 import com.nutrihealth.backend.NutritionalPlanning.domain.model.commands.NutritionPlanCommands.UpdateActiveNutritionPlanCommand;
 import com.nutrihealth.backend.NutritionalPlanning.domain.model.commands.NutritionPlanCommands.UpdateNutritionalPlanCommand;
+import com.nutrihealth.backend.NutritionalPlanning.domain.model.commands.PlannedFoodsCommands.CreatePlannedFoodCommand;
+import com.nutrihealth.backend.NutritionalPlanning.domain.model.commands.ScheduledMealCommands.CreateScheduledMealCommand;
 import com.nutrihealth.backend.NutritionalPlanning.domain.model.entity.DailyPlan;
+import com.nutrihealth.backend.NutritionalPlanning.domain.model.entity.PlannedFood;
+import com.nutrihealth.backend.NutritionalPlanning.domain.model.entity.ScheduledMeal;
 import com.nutrihealth.backend.NutritionalPlanning.domain.model.queries.GetDailyPlanByIdAndPlanIdQuery;
 import com.nutrihealth.backend.NutritionalPlanning.domain.model.queries.GetNutritionalPlanByIdQuery;
+import com.nutrihealth.backend.NutritionalPlanning.domain.model.valueobjects.WeekDay;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
-import java.util.Optional;
 
 
 @RestController
@@ -83,6 +89,37 @@ public class NutritionalPlanCommandController {
     public ResponseEntity<List<DailyPlan>> getDailyPlansByUserAndPlanId(@PathVariable Long userId, @PathVariable Long planId) {
         List<DailyPlan> dailyPlans = queryService.handle(new GetDailyPlanByIdAndPlanIdQuery(userId, planId));
         return ResponseEntity.ok(dailyPlans);
+    }
+
+    @DeleteMapping("/{userId}/{planId}/daily-plan/{weekDay}")
+    public ResponseEntity<Void> deleteDailyPlan(@PathVariable Long userId,
+                                                @PathVariable Long planId,
+                                                @PathVariable WeekDay weekDay) {
+        commandService.handle(new DeleteDailyPlanCommand(userId, planId, weekDay));
+        return ResponseEntity.noContent().build();
+    }
+
+    @PutMapping("/{userId}/{planId}/daily-plan/{dailyPlanId}")
+    public ResponseEntity<DailyPlan> updateDailyPlan(@PathVariable Long userId,
+                                                     @PathVariable Long planId,
+                                                     @PathVariable Long dailyPlanId,
+                                                     @RequestBody UpdateDailyPlanCommand command) {
+        return commandService.handle(command)
+                .map(ResponseEntity::ok)
+                .orElse(ResponseEntity.badRequest().build());
+    }
+
+    @PostMapping("/scheduled-meals")
+    public ResponseEntity<ScheduledMeal> createScheduledMeal(@RequestBody CreateScheduledMealCommand command) {
+        return commandService.handle(command)
+                .map(ResponseEntity::ok)
+                .orElse(ResponseEntity.badRequest().build());
+    }
+    @PostMapping("/planned-foods")
+    public ResponseEntity<PlannedFood> addPlannedFood(@RequestBody CreatePlannedFoodCommand command) {
+        return commandService.handle(command)
+                .map(ResponseEntity::ok)
+                .orElse(ResponseEntity.badRequest().build());
     }
 
 }
