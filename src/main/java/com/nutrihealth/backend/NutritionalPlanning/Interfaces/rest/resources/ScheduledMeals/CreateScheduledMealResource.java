@@ -7,9 +7,6 @@ import com.nutrihealth.backend.NutritionalPlanning.domain.model.valueobjects.Wee
 import java.util.List;
 
 public record CreateScheduledMealResource(
-        Long userId,
-        Long planId,
-        WeekDay weekDay,
         TimeDay timeDay,
         Long recipeId,
         List<CreatePlannedFoodResource> plannedFoods

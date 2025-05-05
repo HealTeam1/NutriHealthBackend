@@ -11,5 +11,6 @@ public class PlannedFoodResourceFromEntityAssembler {
                 entity.getAmount(),
                 entity.getUnit()
         );
+
     }
 }

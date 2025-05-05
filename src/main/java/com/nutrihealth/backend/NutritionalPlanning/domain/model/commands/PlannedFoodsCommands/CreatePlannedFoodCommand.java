@@ -7,11 +7,11 @@ import com.nutrihealth.backend.NutritionalPlanning.domain.model.valueobjects.Wee
 public record CreatePlannedFoodCommand(
         Long userId,
         Long planId,
+        WeekDay weekDay,
+        TimeDay timeDay,
         Long foodId,
         Integer amount,
-        Unit unit,
-        WeekDay weekDay,
-        TimeDay timeDay
+        Unit unit
 ) {
 
 }

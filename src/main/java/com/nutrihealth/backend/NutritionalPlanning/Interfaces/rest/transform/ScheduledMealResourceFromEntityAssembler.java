@@ -6,10 +6,11 @@ import com.nutrihealth.backend.NutritionalPlanning.domain.model.entity.Scheduled
 public class ScheduledMealResourceFromEntityAssembler {
     public static ScheduledMealResource toResourceFromEntity(ScheduledMeal entity){
         return new ScheduledMealResource(
-                entity.getId(),
+                entity.getRecipeId(),
                 entity.getTimeDay(),
-                entity.getPlannedFoods().stream().map(PlannedFoodResourceFromEntityAssembler::toResourceFromEntity).toList()
+                entity.getPlannedFoods().stream()
+                        .map(PlannedFoodResourceFromEntityAssembler::toResourceFromEntity)
+                        .toList()
         );
-
     }
 }
