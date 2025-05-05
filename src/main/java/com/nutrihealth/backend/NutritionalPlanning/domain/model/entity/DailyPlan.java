@@ -36,12 +36,17 @@ public class DailyPlan {
 
     @OneToMany(mappedBy = "dailyPlan", cascade = CascadeType.ALL, orphanRemoval = true)
     @JsonManagedReference
-    private List<ScheduledMeal> scheduledMeals;
+    private List<ScheduledMeal> scheduledMeals = new ArrayList<>();
 
     protected DailyPlan() {}
     public DailyPlan(CreateDailyPlanCommand command) {
         this.weekDay = command.weekDay();
-        this.scheduledMeals = command.scheduledMeals() == null ? new ArrayList<>() : command.scheduledMeals();
+        if(command.scheduledMeals() != null){
+            for(ScheduledMeal meal : command.scheduledMeals()){
+                this.scheduledMeals.add(meal);
+                meal.setDailyPlan(this);
+            }
+        }
     }
     public ScheduledMeal getScheduledMeal(TimeDay timeDay){
         return this.scheduledMeals

@@ -2,6 +2,7 @@ package com.nutrihealth.backend.NutritionalPlanning.domain.model.entity;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
+import com.nutrihealth.backend.NutritionalPlanning.Interfaces.rest.resources.ScheduledMeals.CreateScheduledMealResource;
 import com.nutrihealth.backend.NutritionalPlanning.domain.model.commands.ScheduledMealCommands.CreateScheduledMealCommand;
 import com.nutrihealth.backend.NutritionalPlanning.domain.model.valueobjects.TimeDay;
 import jakarta.persistence.*;
@@ -34,17 +35,24 @@ public class ScheduledMeal {
 
     @OneToMany(mappedBy = "scheduledMeal", cascade = CascadeType.ALL, fetch = FetchType.LAZY, orphanRemoval = true)
     @JsonManagedReference
-    private List<PlannedFood> plannedFoods;
+    private List<PlannedFood> plannedFoods = new ArrayList<>();
 
     protected ScheduledMeal() {}
 
     public ScheduledMeal(CreateScheduledMealCommand command) {
         this.recipeId = command.recipeId() == null ? null : command.recipeId();
         this.timeDay = command.timeDay();
-        this.plannedFoods = new ArrayList<>();
+        if(command.plannedFoods() != null){
+            for(PlannedFood plannedFood : command.plannedFoods()){
+                this.plannedFoods.add(plannedFood);
+                plannedFood.setScheduledMeal(this);
+            }
+        }
     }
+
     public void addPlannedFood(PlannedFood plannedFood){
         plannedFood.setScheduledMeal(this);
         this.plannedFoods.add(plannedFood);
     }
+
 }

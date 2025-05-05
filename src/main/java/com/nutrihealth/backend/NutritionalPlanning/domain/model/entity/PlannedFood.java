@@ -15,6 +15,9 @@ public class PlannedFood {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    @Column(nullable = false)
+    private Long foodId;
+
     @ManyToOne
     @JoinColumn(name = "scheduled_meal", nullable = false)
     @JsonBackReference
@@ -32,6 +35,7 @@ public class PlannedFood {
     public PlannedFood(CreatePlannedFoodCommand command){
         this.amount = command.amount();
         this.unit = command.unit();
+        this.foodId= command.foodId();
     }
 
 
