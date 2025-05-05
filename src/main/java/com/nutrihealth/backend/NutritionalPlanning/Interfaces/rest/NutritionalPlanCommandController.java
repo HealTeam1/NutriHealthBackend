@@ -35,7 +35,7 @@ public class NutritionalPlanCommandController {
         this.commandService = commandService;
         this.queryService = queryService;
     }
-
+    /*
     @PostMapping
     public ResponseEntity<NutritionalPlan> createPlan(@RequestBody CreateNutritionalPlanCommand command) {
         return commandService.handle(command)
@@ -76,6 +76,7 @@ public class NutritionalPlanCommandController {
                 .orElse(ResponseEntity.badRequest().build());
     }
 
+     */
     // GET nutritional plan by id
     @GetMapping("/{planId}")
     public ResponseEntity<NutritionalPlan> getNutritionalPlanById(@PathVariable Long planId) {
@@ -90,7 +91,7 @@ public class NutritionalPlanCommandController {
         List<DailyPlan> dailyPlans = queryService.handle(new GetDailyPlanByIdAndPlanIdQuery(userId, planId));
         return ResponseEntity.ok(dailyPlans);
     }
-
+    /*
     @DeleteMapping("/{userId}/{planId}/daily-plan/{weekDay}")
     public ResponseEntity<Void> deleteDailyPlan(@PathVariable Long userId,
                                                 @PathVariable Long planId,
@@ -121,5 +122,7 @@ public class NutritionalPlanCommandController {
                 .map(ResponseEntity::ok)
                 .orElse(ResponseEntity.badRequest().build());
     }
+
+     */
 
 }
