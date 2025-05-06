@@ -11,7 +11,6 @@ public record UpdateNutritionalPlanCommand(
         String name,
         Date startDate,
         String description,
-        boolean active,
-        List<DailyPlan> dailyPlans
+        boolean active
 ) {
 }

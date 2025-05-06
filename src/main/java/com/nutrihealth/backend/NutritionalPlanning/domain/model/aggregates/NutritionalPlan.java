@@ -64,7 +64,6 @@ public class NutritionalPlan extends AuditableAbstractAggregateRoot<NutritionalP
         this.name= command.name();
         this.active = command.active();
         this.description = command.description();
-        this.dailyPlans = command.dailyPlans() == null ? this.dailyPlans : command.dailyPlans();
     }
 
     public void addDailyPlan(DailyPlan dailyPlan){

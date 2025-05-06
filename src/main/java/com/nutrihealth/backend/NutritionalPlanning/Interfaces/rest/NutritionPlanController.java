@@ -2,6 +2,7 @@ package com.nutrihealth.backend.NutritionalPlanning.Interfaces.rest;
 
 import com.nutrihealth.backend.NutritionalPlanning.Interfaces.rest.resources.NutritionPlan.CreateNutritionalPlanResource;
 import com.nutrihealth.backend.NutritionalPlanning.Interfaces.rest.resources.NutritionPlan.NutritionalPlanResource;
+import com.nutrihealth.backend.NutritionalPlanning.Interfaces.rest.resources.NutritionPlan.UpdateNutritionalPlanResource;
 import com.nutrihealth.backend.NutritionalPlanning.Interfaces.rest.transform.*;
 import com.nutrihealth.backend.NutritionalPlanning.application.internal.commandservices.NutritionalPlanCommandServiceImpl;
 import com.nutrihealth.backend.NutritionalPlanning.application.internal.queryservices.NutritionalPlanQueryServiceImpl;
@@ -27,6 +28,7 @@ public class NutritionPlanController {
         this.commandService = commandService;
         this.queryService = queryService;
     }
+
     @PostMapping("/{userId}/nutritional-plan")
     public ResponseEntity<NutritionalPlanResource> createNutritionalPlan(@PathVariable Long userId,
                                                                          @RequestBody CreateNutritionalPlanResource resource) {
@@ -38,16 +40,35 @@ public class NutritionPlanController {
         var nutritionalPlanCreated = nutritionalPlan.get();
         return new ResponseEntity<>(NutritionalPlanResourceFromEntityAssembler.toResourceFromEntity(nutritionalPlanCreated), CREATED);
     }
+
     @DeleteMapping("/{userId}/nutritional-plan/{planId}'")
     public void deleteNutritionalPlan(@PathVariable Long userId,
-                                                      @PathVariable Long planId){
-        var cmd = new DeleteNutritionPlanByUserIdAndId(userId, planId);
-        commandService.handle(cmd);
+                                      @PathVariable Long planId) {
+        //var cmd = new DeleteNutritionPlanByUserIdAndId(userId, planId);
+        commandService.handle(new DeleteNutritionPlanByUserIdAndId(userId, planId));
     }
+
     @GetMapping("/{userId}/nutritional/plan")
-    public ResponseEntity<List<NutritionalPlanResource>> getUserNutritionalPlans(@PathVariable Long userId){
+    public ResponseEntity<List<NutritionalPlanResource>> getUserNutritionalPlans(@PathVariable Long userId) {
         var query = new GetUserNutritionalPlanQuery(userId);
-        return new ResponseEntity<>(ListNutritionalPlanResourceFromListEntityAssembler.toResourceFromEntity(queryService.handle(query)),CREATED);
+        return new ResponseEntity<>(ListNutritionalPlanResourceFromListEntityAssembler.toResourceFromEntity(queryService.handle(query)), CREATED);
     }
+
+    @PutMapping("/{userId}/nutritional-plan/{planId}")
+    public ResponseEntity<NutritionalPlanResource> updateNutritionalPlan(@PathVariable Long userId,
+                                                                         @PathVariable Long planId,
+                                                                         @RequestBody UpdateNutritionalPlanResource resource) {
+        var plan = commandService.handle(
+                UpdateNutritionalPlanCommandFromResourceAssembler.toCommandFromResource(resource, userId, planId)
+        );
+        if (plan.isEmpty()) {
+            throw new RuntimeException("Could not update nutritional plan");
+        }
+        var nutritionalPlanUpdated = plan.get();
+        return new ResponseEntity<>(NutritionalPlanResourceFromEntityAssembler.toResourceFromEntity(nutritionalPlanUpdated), CREATED);
+
+
+    }
+
 }
 
