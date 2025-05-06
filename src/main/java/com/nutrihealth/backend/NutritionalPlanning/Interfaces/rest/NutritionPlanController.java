@@ -7,9 +7,11 @@ import com.nutrihealth.backend.NutritionalPlanning.application.internal.commands
 import com.nutrihealth.backend.NutritionalPlanning.application.internal.queryservices.NutritionalPlanQueryServiceImpl;
 import com.nutrihealth.backend.NutritionalPlanning.domain.model.aggregates.NutritionalPlan;
 import com.nutrihealth.backend.NutritionalPlanning.domain.model.commands.NutritionPlanCommands.DeleteNutritionPlanByUserIdAndId;
+import com.nutrihealth.backend.NutritionalPlanning.domain.model.queries.GetUserNutritionalPlanQuery;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
 import java.util.Optional;
 
 import static org.springframework.http.HttpStatus.CREATED;
@@ -41,6 +43,11 @@ public class NutritionPlanController {
                                                       @PathVariable Long planId){
         var cmd = new DeleteNutritionPlanByUserIdAndId(userId, planId);
         commandService.handle(cmd);
+    }
+    @GetMapping("/{userId}/nutritional/plan")
+    public ResponseEntity<List<NutritionalPlanResource>> getUserNutritionalPlans(@PathVariable Long userId){
+        var query = new GetUserNutritionalPlanQuery(userId);
+        return new ResponseEntity<>(ListNutritionalPlanResourceFromListEntityAssembler.toResourceFromEntity(queryService.handle(query)),CREATED);
     }
 }
 

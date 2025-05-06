@@ -5,6 +5,7 @@ import com.nutrihealth.backend.NutritionalPlanning.domain.model.aggregates.Nutri
 import com.nutrihealth.backend.NutritionalPlanning.domain.model.entity.DailyPlan;
 import com.nutrihealth.backend.NutritionalPlanning.domain.model.queries.GetDailyPlanByIdAndPlanIdQuery;
 import com.nutrihealth.backend.NutritionalPlanning.domain.model.queries.GetNutritionalPlanByIdQuery;
+import com.nutrihealth.backend.NutritionalPlanning.domain.model.queries.GetUserNutritionalPlanQuery;
 import com.nutrihealth.backend.NutritionalPlanning.domain.services.NutritionalPlanQueryService;
 import org.springframework.stereotype.Service;
 
@@ -24,6 +25,11 @@ public class NutritionalPlanQueryServiceImpl  implements NutritionalPlanQuerySer
     @Override
     public Optional<NutritionalPlan> handle(GetNutritionalPlanByIdQuery query) {
         return repository.findById(query.planId());
+    }
+
+    @Override
+    public List<NutritionalPlan> handle(GetUserNutritionalPlanQuery query) {
+        return repository.findAllByUserId(query.userId());
     }
 
     @Override
