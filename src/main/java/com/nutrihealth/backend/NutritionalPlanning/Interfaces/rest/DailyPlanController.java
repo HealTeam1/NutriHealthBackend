@@ -6,13 +6,18 @@ import com.nutrihealth.backend.NutritionalPlanning.Interfaces.rest.transform.Cre
 import com.nutrihealth.backend.NutritionalPlanning.Interfaces.rest.transform.DailyPlanResourceFromEntityAssembler;
 import com.nutrihealth.backend.NutritionalPlanning.application.internal.commandservices.NutritionalPlanCommandServiceImpl;
 import com.nutrihealth.backend.NutritionalPlanning.application.internal.queryservices.NutritionalPlanQueryServiceImpl;
+import com.nutrihealth.backend.NutritionalPlanning.domain.model.commands.DailyPlanCommands.DeleteDailyPlanCommand;
 import com.nutrihealth.backend.NutritionalPlanning.domain.model.entity.DailyPlan;
+import com.nutrihealth.backend.NutritionalPlanning.domain.model.queries.GetDailyPlanByIdAndPlanIdQuery;
+import com.nutrihealth.backend.NutritionalPlanning.domain.model.valueobjects.WeekDay;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
 import java.util.Optional;
 
 import static org.springframework.http.HttpStatus.CREATED;
+import static org.springframework.http.HttpStatus.OK;
 
 @RestController
 @RequestMapping("/api/v1/daily-plans")
@@ -35,5 +40,21 @@ public class DailyPlanController {
         }
         var dailyProductCreated = dailyPlan.get();
         return new ResponseEntity<>(DailyPlanResourceFromEntityAssembler.toResourceFromEntity(dailyProductCreated), CREATED);
+    }
+    @DeleteMapping("/{userId}/{planId}/dailyPlan/{weekDay}")
+    public ResponseEntity<WeekDay> deleteDailyPlan(
+            @PathVariable Long userId,
+            @PathVariable Long planId,
+            @PathVariable WeekDay weekDay
+            ){
+
+        commandService.handle( new DeleteDailyPlanCommand(userId,planId,weekDay));
+        return new ResponseEntity<>(weekDay, OK);
+    }
+    @GetMapping("/{userId}/{planId}/dailyPlan")
+    public ResponseEntity<List<DailyPlanResource>> getDailyPlansByPlanId(@PathVariable Long userId,
+                                                                     @PathVariable Long planId) {
+        var dailyPLans =queryService.handle(new GetDailyPlanByIdAndPlanIdQuery(userId,planId));
+        return new ResponseEntity<>(dailyPLans.stream().map(DailyPlanResourceFromEntityAssembler::toResourceFromEntity).toList(), OK);
     }
 }

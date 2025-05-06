@@ -14,4 +14,5 @@ public interface NutritionalPlanQueryService {
     List<NutritionalPlan> handle(GetUserNutritionalPlanQuery query);
     List<DailyPlan> handle(GetDailyPlanByIdAndPlanIdQuery query);
 
+
 }
