@@ -31,7 +31,7 @@ public class NutritionalPlan extends AuditableAbstractAggregateRoot<NutritionalP
     @Column(nullable = false)
     private String name;
 
-
+    @Column(nullable = false)
     private String description;
 
     @Column(nullable = false)
