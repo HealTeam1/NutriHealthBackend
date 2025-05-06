@@ -1,21 +1,12 @@
 package com.nutrihealth.backend.NutritionalPlanning.Interfaces.rest;
 
-import com.nutrihealth.backend.NutritionalPlanning.Interfaces.rest.resources.DailyPlan.CreateDailyPlanResource;
-import com.nutrihealth.backend.NutritionalPlanning.Interfaces.rest.resources.DailyPlan.DailyPlanResource;
 import com.nutrihealth.backend.NutritionalPlanning.Interfaces.rest.resources.NutritionPlan.CreateNutritionalPlanResource;
 import com.nutrihealth.backend.NutritionalPlanning.Interfaces.rest.resources.NutritionPlan.NutritionalPlanResource;
-import com.nutrihealth.backend.NutritionalPlanning.Interfaces.rest.resources.PlannedFoods.CreatePlannedFoodResource;
-import com.nutrihealth.backend.NutritionalPlanning.Interfaces.rest.resources.PlannedFoods.PlannedFoodResource;
-import com.nutrihealth.backend.NutritionalPlanning.Interfaces.rest.resources.ScheduledMeals.CreateScheduledMealResource;
-import com.nutrihealth.backend.NutritionalPlanning.Interfaces.rest.resources.ScheduledMeals.ScheduledMealResource;
 import com.nutrihealth.backend.NutritionalPlanning.Interfaces.rest.transform.*;
 import com.nutrihealth.backend.NutritionalPlanning.application.internal.commandservices.NutritionalPlanCommandServiceImpl;
 import com.nutrihealth.backend.NutritionalPlanning.application.internal.queryservices.NutritionalPlanQueryServiceImpl;
 import com.nutrihealth.backend.NutritionalPlanning.domain.model.aggregates.NutritionalPlan;
 import com.nutrihealth.backend.NutritionalPlanning.domain.model.commands.NutritionPlanCommands.DeleteNutritionPlanByUserIdAndId;
-import com.nutrihealth.backend.NutritionalPlanning.domain.model.entity.DailyPlan;
-import com.nutrihealth.backend.NutritionalPlanning.domain.model.entity.PlannedFood;
-import com.nutrihealth.backend.NutritionalPlanning.domain.model.entity.ScheduledMeal;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
