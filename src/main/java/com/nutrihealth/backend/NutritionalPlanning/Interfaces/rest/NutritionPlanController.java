@@ -52,40 +52,4 @@ public class NutritionPlanController {
         commandService.handle(cmd);
     }
 }
-/*
-    @PostMapping("/daily-plan")
-    public ResponseEntity<DailyPlanResource> createDailyPlan(@RequestBody CreateDailyPlanResource resource){
-        Optional<DailyPlan> dailyPlan = commandService
-                .handle(CreateDailyPlanCommandFromResourceAssembler.toCommandFromResource(resource));
-        if(dailyPlan.isEmpty()){
-            throw new RuntimeException("Could not create daily plan");
-        }
-        var dailyProductCreated = dailyPlan.get();
 
-        return new ResponseEntity<>(DailyPlanResourceFromEntityAssembler.toResourceFromEntity(dailyProductCreated),CREATED);
-    }
-    @PostMapping("/scheduled-meal")
-    public ResponseEntity<ScheduledMealResource> createScheduledMeal(@RequestBody CreateScheduledMealResource resource){
-        Optional<ScheduledMeal> scheduledMeal = commandService
-                .handle(CreateScheduledMealCommandFromCreateScheduledMealResourceAssembler.toCommandFromResource(resource));
-        if(scheduledMeal.isEmpty()){
-            throw new RuntimeException("Could not create scheduled meal");
-        }
-        var scheduledMealCreated = scheduledMeal.get();
-        return new ResponseEntity<>(ScheduledMealResourceFromEntityAssembler.toResourceFromEntity(scheduledMealCreated),CREATED);
-    }
-    @PostMapping("/{userId}/{dailyPlanId}/planned-foods")
-    public ResponseEntity<PlannedFoodResource> addPlannedFood(@RequestBody CreatePlannedFoodResource resource,
-                                                              @PathVariable Long userId,
-                                                              @PathVariable Long dailyPlanId){
-        Optional<PlannedFood> plannedFood = commandService
-                .handle(CreatePlannedFoodCommandFromResourceAssembler.toCommandFromResource(resource));
-        if(plannedFood.isEmpty()){
-            throw new RuntimeException("Could not create scheduled meal");
-        }
-        var plannedFoodCreated = plannedFood.get();
-        return new ResponseEntity<>(PlannedFoodResourceFromEntityAssembler.toResourceFromEntity(plannedFoodCreated),CREATED);
-    }
-}
-
- */
