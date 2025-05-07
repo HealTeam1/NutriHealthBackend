@@ -10,6 +10,7 @@ import com.nutrihealth.backend.NutritionalPlanning.domain.model.commands.Nutriti
 import com.nutrihealth.backend.NutritionalPlanning.domain.model.commands.NutritionPlanCommands.UpdateNutritionalPlanCommand;
 import com.nutrihealth.backend.NutritionalPlanning.domain.model.commands.PlannedFoodsCommands.CreatePlannedFoodCommand;
 import com.nutrihealth.backend.NutritionalPlanning.domain.model.commands.ScheduledMealCommands.CreateScheduledMealCommand;
+import com.nutrihealth.backend.NutritionalPlanning.domain.model.commands.ScheduledMealCommands.DeleteScheduledMealCommand;
 import com.nutrihealth.backend.NutritionalPlanning.domain.model.entity.DailyPlan;
 import com.nutrihealth.backend.NutritionalPlanning.domain.model.entity.PlannedFood;
 import com.nutrihealth.backend.NutritionalPlanning.domain.model.entity.ScheduledMeal;
@@ -27,6 +28,7 @@ public interface NutritionalPlanCommandService {
     Optional<DailyPlan> handle(UpdateDailyPlanCommand command);
 
     Optional<ScheduledMeal> handle(CreateScheduledMealCommand command);
+    void handle(DeleteScheduledMealCommand command);
 
 
     Optional<PlannedFood> handle(CreatePlannedFoodCommand command);

@@ -63,6 +63,9 @@ public class DailyPlan {
         this.weekDay = command.weekDay() == null ? this.weekDay : command.weekDay();
         this.scheduledMeals = command.scheduledMeals() == null ? this.scheduledMeals : command.scheduledMeals();
     }
+    public void deleteScheduledMeal(TimeDay timeday){
+        this.scheduledMeals.removeIf(scheduledMeal -> scheduledMeal.getTimeDay().equals(timeday));
+    }
 
 
 }

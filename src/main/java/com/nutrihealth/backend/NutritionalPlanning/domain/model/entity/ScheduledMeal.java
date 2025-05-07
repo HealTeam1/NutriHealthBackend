@@ -50,6 +50,7 @@ public class ScheduledMeal {
         }
     }
 
+
     public void addPlannedFood(PlannedFood plannedFood){
         plannedFood.setScheduledMeal(this);
         this.plannedFoods.add(plannedFood);

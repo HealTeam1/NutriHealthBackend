@@ -7,8 +7,10 @@ import com.nutrihealth.backend.NutritionalPlanning.Interfaces.rest.transform.Dai
 import com.nutrihealth.backend.NutritionalPlanning.application.internal.commandservices.NutritionalPlanCommandServiceImpl;
 import com.nutrihealth.backend.NutritionalPlanning.application.internal.queryservices.NutritionalPlanQueryServiceImpl;
 import com.nutrihealth.backend.NutritionalPlanning.domain.model.commands.DailyPlanCommands.DeleteDailyPlanCommand;
+import com.nutrihealth.backend.NutritionalPlanning.domain.model.commands.ScheduledMealCommands.DeleteScheduledMealCommand;
 import com.nutrihealth.backend.NutritionalPlanning.domain.model.entity.DailyPlan;
 import com.nutrihealth.backend.NutritionalPlanning.domain.model.queries.GetDailyPlanByIdAndPlanIdQuery;
+import com.nutrihealth.backend.NutritionalPlanning.domain.model.valueobjects.TimeDay;
 import com.nutrihealth.backend.NutritionalPlanning.domain.model.valueobjects.WeekDay;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -41,7 +43,7 @@ public class DailyPlanController {
         var dailyProductCreated = dailyPlan.get();
         return new ResponseEntity<>(DailyPlanResourceFromEntityAssembler.toResourceFromEntity(dailyProductCreated), CREATED);
     }
-    @DeleteMapping("/{userId}/{planId}/dailyPlan/{weekDay}")
+    @DeleteMapping("/{userId}/{planId}/{weekDay}")
     public ResponseEntity<WeekDay> deleteDailyPlan(
             @PathVariable Long userId,
             @PathVariable Long planId,
@@ -56,5 +58,14 @@ public class DailyPlanController {
                                                                      @PathVariable Long planId) {
         var dailyPLans =queryService.handle(new GetDailyPlanByIdAndPlanIdQuery(userId,planId));
         return new ResponseEntity<>(dailyPLans.stream().map(DailyPlanResourceFromEntityAssembler::toResourceFromEntity).toList(), OK);
+    }
+    @DeleteMapping("/{userId}/{planId}/{weekDay}/{timeDay}")
+    public ResponseEntity<Void> deleteScheduledMeal(@PathVariable Long userId,
+                                                    @PathVariable Long planId,
+                                                    @PathVariable WeekDay weekDay,
+                                                    @PathVariable TimeDay timeDay){
+        var cmd = new DeleteScheduledMealCommand(userId,planId,weekDay,timeDay);
+        commandService.handle(cmd);
+        return new ResponseEntity<>(OK);
     }
 }

@@ -11,6 +11,7 @@ import com.nutrihealth.backend.NutritionalPlanning.domain.model.commands.Nutriti
 import com.nutrihealth.backend.NutritionalPlanning.domain.model.commands.NutritionPlanCommands.UpdateNutritionalPlanCommand;
 import com.nutrihealth.backend.NutritionalPlanning.domain.model.commands.PlannedFoodsCommands.CreatePlannedFoodCommand;
 import com.nutrihealth.backend.NutritionalPlanning.domain.model.commands.ScheduledMealCommands.CreateScheduledMealCommand;
+import com.nutrihealth.backend.NutritionalPlanning.domain.model.commands.ScheduledMealCommands.DeleteScheduledMealCommand;
 import com.nutrihealth.backend.NutritionalPlanning.domain.model.entity.DailyPlan;
 import com.nutrihealth.backend.NutritionalPlanning.domain.model.entity.PlannedFood;
 import com.nutrihealth.backend.NutritionalPlanning.domain.model.entity.ScheduledMeal;
@@ -98,6 +99,14 @@ public class NutritionalPlanCommandServiceImpl implements NutritionalPlanCommand
         dp.addScheduledMeal(scheduledMeal);
         repository.save(plan);
         return Optional.of(scheduledMeal);
+    }
+
+    @Override
+    public void handle(DeleteScheduledMealCommand command) {
+        var plan = repository.findByUserIdAndId(command.userId(), command.planId())
+                .orElseThrow(() -> new IllegalArgumentException("Plan Not Founded"));
+        plan.getDailyPlan(command.weekDay()).deleteScheduledMeal(command.timeDay());
+        repository.save(plan);
     }
 
     @Override

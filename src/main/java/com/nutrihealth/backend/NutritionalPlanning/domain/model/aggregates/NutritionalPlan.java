@@ -4,6 +4,8 @@ import com.fasterxml.jackson.annotation.JsonManagedReference;
 import com.nutrihealth.backend.NutritionalPlanning.domain.model.commands.NutritionPlanCommands.CreateNutritionalPlanCommand;
 import com.nutrihealth.backend.NutritionalPlanning.domain.model.commands.NutritionPlanCommands.UpdateNutritionalPlanCommand;
 import com.nutrihealth.backend.NutritionalPlanning.domain.model.entity.DailyPlan;
+import com.nutrihealth.backend.NutritionalPlanning.domain.model.entity.ScheduledMeal;
+import com.nutrihealth.backend.NutritionalPlanning.domain.model.valueobjects.TimeDay;
 import com.nutrihealth.backend.NutritionalPlanning.domain.model.valueobjects.WeekDay;
 import com.nutrihealth.backend.shared.domain.model.aggregates.AuditableAbstractAggregateRoot;
 import jakarta.persistence.*;
@@ -58,6 +60,12 @@ public class NutritionalPlan extends AuditableAbstractAggregateRoot<NutritionalP
                 .filter(dailyPlan -> dailyPlan.getWeekDay().equals(weekDay))
                 .findFirst()
                 .orElse(null);
+    }
+    public ScheduledMeal getScheduledMealByWeekDayAndTimeDay(WeekDay weekDay, TimeDay timeDay){
+        return this.getDailyPlan(weekDay).getScheduledMeals().stream()
+                .filter(scheduledMeal -> scheduledMeal.getTimeDay().equals(timeDay))
+                .findFirst()
+                .orElseThrow(()->new IllegalArgumentException("Scheduled Meal not found"));
     }
     public void updateNutritionPlan(UpdateNutritionalPlanCommand command){
         this.startDate = command.startDate();
