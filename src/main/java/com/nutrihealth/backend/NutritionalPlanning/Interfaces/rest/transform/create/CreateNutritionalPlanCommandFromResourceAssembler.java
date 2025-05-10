@@ -1,4 +1,4 @@
-package com.nutrihealth.backend.NutritionalPlanning.Interfaces.rest.transform;
+package com.nutrihealth.backend.NutritionalPlanning.Interfaces.rest.transform.create;
 
 import com.nutrihealth.backend.NutritionalPlanning.Interfaces.rest.resources.CreateNutritionalPlanResource;
 import com.nutrihealth.backend.NutritionalPlanning.domain.model.commands.NutritionPlanCommands.CreateNutritionalPlanCommand;
