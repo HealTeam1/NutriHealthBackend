@@ -5,10 +5,6 @@ import com.nutrihealth.backend.NutritionalPlanning.domain.model.valueobjects.Uni
 import com.nutrihealth.backend.NutritionalPlanning.domain.model.valueobjects.WeekDay;
 
 public record CreatePlannedFoodCommand(
-        Long userId,
-        Long planId,
-        WeekDay weekDay,
-        TimeDay timeDay,
         Long foodId,
         Integer amount,
         Unit unit

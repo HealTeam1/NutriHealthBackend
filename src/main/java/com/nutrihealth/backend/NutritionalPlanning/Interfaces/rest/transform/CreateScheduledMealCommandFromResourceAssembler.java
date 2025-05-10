@@ -1,23 +1,16 @@
 package com.nutrihealth.backend.NutritionalPlanning.Interfaces.rest.transform;
 
-import com.nutrihealth.backend.NutritionalPlanning.Interfaces.rest.resources.ScheduledMeals.CreateScheduledMealResource;
+import com.nutrihealth.backend.NutritionalPlanning.Interfaces.rest.resources.CreateScheduledMealResource;
 import com.nutrihealth.backend.NutritionalPlanning.domain.model.commands.ScheduledMealCommands.CreateScheduledMealCommand;
-import com.nutrihealth.backend.NutritionalPlanning.domain.model.valueobjects.WeekDay;
+import com.nutrihealth.backend.NutritionalPlanning.domain.model.entity.ScheduledMeal;
 
 public class CreateScheduledMealCommandFromResourceAssembler {
-    public static CreateScheduledMealCommand toCommandFromResource(CreateScheduledMealResource resource,
-                                                                   Long userId,
-                                                                   Long planId,
-                                                                   WeekDay weekDay){
+    public static CreateScheduledMealCommand toCommand(CreateScheduledMealResource resource) {
         return new CreateScheduledMealCommand(
-                userId,
-                planId,
-                weekDay,
                 resource.recipeId(),
                 resource.timeDay(),
-                resource.plannedFoods().stream()
-                        .map(pf -> PlannedFoodFromCreatePlannedFoodResource
-                                .toEntityFromResource(pf,userId,planId,weekDay,resource.timeDay()))
+                resource.plannedFoodResources().stream()
+                        .map(CreatePlannedFoodCommandFromResourceAssembler::toCommand)
                         .toList()
         );
     }

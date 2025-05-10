@@ -19,19 +19,6 @@ import java.util.Optional;
 
 public interface NutritionalPlanCommandService {
     Optional<NutritionalPlan> handle(CreateNutritionalPlanCommand command);
-    Long handle(DeleteNutritionPlanByUserIdAndId command);
-    Optional<NutritionalPlan> handle(UpdateActiveNutritionPlanCommand command);
-    Optional<NutritionalPlan> handle(UpdateNutritionalPlanCommand command);
-
-    Optional<DailyPlan> handle(CreateDailyPlanCommand command);
-    void handle(DeleteDailyPlanCommand command);
-    Optional<DailyPlan> handle(UpdateDailyPlanCommand command);
-
-    Optional<ScheduledMeal> handle(CreateScheduledMealCommand command);
-    void handle(DeleteScheduledMealCommand command);
-
-
-    Optional<PlannedFood> handle(CreatePlannedFoodCommand command);
 
 
 }

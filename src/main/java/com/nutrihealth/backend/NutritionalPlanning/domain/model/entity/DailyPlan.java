@@ -41,11 +41,11 @@ public class DailyPlan {
     protected DailyPlan() {}
     public DailyPlan(CreateDailyPlanCommand command) {
         this.weekDay = command.weekDay();
-        if(command.scheduledMeals() != null){
-            for(ScheduledMeal meal : command.scheduledMeals()){
-                this.scheduledMeals.add(meal);
-                meal.setDailyPlan(this);
-            }
+        if (command.scheduledMeals() != null) {
+            command.scheduledMeals().forEach(cmd -> {
+                ScheduledMeal scheduledMeal = new ScheduledMeal(cmd);
+                addScheduledMeal(scheduledMeal);
+            });
         }
     }
     public ScheduledMeal getScheduledMeal(TimeDay timeDay){

@@ -1,0 +1,14 @@
+package com.nutrihealth.backend.NutritionalPlanning.Interfaces.rest.resources;
+
+import java.util.Date;
+import java.util.List;
+
+public record CreateNutritionalPlanResource(
+        Date startDate,
+        String name,
+        String description,
+        Boolean active,
+        List<CreateDailyPlanResource> dailyplans
+
+) {
+}

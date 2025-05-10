@@ -42,31 +42,22 @@ public class NutritionalPlan extends AuditableAbstractAggregateRoot<NutritionalP
     @OneToMany(mappedBy = "nutritionalPlan", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
     @JsonManagedReference
     private List<DailyPlan> dailyPlans = new ArrayList<>();
-
     protected NutritionalPlan() {}
 
     public NutritionalPlan(CreateNutritionalPlanCommand command) {
         this.userId = command.userId();
         this.startDate = command.startDate();
         this.name = command.name();
-        this.description = command.description().orElse(null);
+        this.description = command.description();
         this.active = command.active();
-        this.dailyPlans = new ArrayList<>();
+        if (command.dailyPlans() != null) {
+            command.dailyPlans().forEach(dailyPlan -> {
+                DailyPlan dp = new DailyPlan(dailyPlan);
+                addDailyPlan(dp);
+            });
+        }
     }
 
-
-    public DailyPlan getDailyPlanByWeekDay(WeekDay weekDay){
-        return this.dailyPlans.stream()
-                .filter(dailyPlan -> dailyPlan.getWeekDay().equals(weekDay))
-                .findFirst()
-                .orElse(null);
-    }
-    public ScheduledMeal getScheduledMealByWeekDayAndTimeDay(WeekDay weekDay, TimeDay timeDay){
-        return this.getDailyPlan(weekDay).getScheduledMeals().stream()
-                .filter(scheduledMeal -> scheduledMeal.getTimeDay().equals(timeDay))
-                .findFirst()
-                .orElseThrow(()->new IllegalArgumentException("Scheduled Meal not found"));
-    }
     public void updateNutritionPlan(UpdateNutritionalPlanCommand command){
         this.startDate = command.startDate();
         this.name= command.name();
