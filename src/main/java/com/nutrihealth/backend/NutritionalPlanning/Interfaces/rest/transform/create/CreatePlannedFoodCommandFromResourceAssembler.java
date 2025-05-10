@@ -1,6 +1,6 @@
 package com.nutrihealth.backend.NutritionalPlanning.Interfaces.rest.transform.create;
 
-import com.nutrihealth.backend.NutritionalPlanning.Interfaces.rest.resources.CreatePlannedFoodResource;
+import com.nutrihealth.backend.NutritionalPlanning.Interfaces.rest.resources.create.CreatePlannedFoodResource;
 import com.nutrihealth.backend.NutritionalPlanning.domain.model.commands.PlannedFoodsCommands.CreatePlannedFoodCommand;
 
 public class CreatePlannedFoodCommandFromResourceAssembler {

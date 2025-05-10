@@ -1,4 +1,4 @@
-package com.nutrihealth.backend.NutritionalPlanning.Interfaces.rest.resources;
+package com.nutrihealth.backend.NutritionalPlanning.Interfaces.rest.resources.create;
 
 import java.util.Date;
 import java.util.List;

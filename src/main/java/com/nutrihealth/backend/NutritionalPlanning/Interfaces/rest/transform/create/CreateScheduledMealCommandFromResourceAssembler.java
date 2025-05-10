@@ -1,6 +1,6 @@
 package com.nutrihealth.backend.NutritionalPlanning.Interfaces.rest.transform.create;
 
-import com.nutrihealth.backend.NutritionalPlanning.Interfaces.rest.resources.CreateScheduledMealResource;
+import com.nutrihealth.backend.NutritionalPlanning.Interfaces.rest.resources.create.CreateScheduledMealResource;
 import com.nutrihealth.backend.NutritionalPlanning.domain.model.commands.ScheduledMealCommands.CreateScheduledMealCommand;
 
 public class CreateScheduledMealCommandFromResourceAssembler {
