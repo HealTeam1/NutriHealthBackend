@@ -2,19 +2,8 @@ package com.nutrihealth.backend.NutritionalPlanning.application.internal.command
 
 import com.nutrihealth.backend.NutritionalPlanning.Infrastructure.persistence.jpa.repositories.NutritionalPlanRepository;
 import com.nutrihealth.backend.NutritionalPlanning.domain.model.aggregates.NutritionalPlan;
-import com.nutrihealth.backend.NutritionalPlanning.domain.model.commands.DailyPlanCommands.CreateDailyPlanCommand;
-import com.nutrihealth.backend.NutritionalPlanning.domain.model.commands.DailyPlanCommands.DeleteDailyPlanCommand;
-import com.nutrihealth.backend.NutritionalPlanning.domain.model.commands.DailyPlanCommands.UpdateDailyPlanCommand;
 import com.nutrihealth.backend.NutritionalPlanning.domain.model.commands.NutritionPlanCommands.CreateNutritionalPlanCommand;
-import com.nutrihealth.backend.NutritionalPlanning.domain.model.commands.NutritionPlanCommands.DeleteNutritionPlanByUserIdAndId;
-import com.nutrihealth.backend.NutritionalPlanning.domain.model.commands.NutritionPlanCommands.UpdateActiveNutritionPlanCommand;
-import com.nutrihealth.backend.NutritionalPlanning.domain.model.commands.NutritionPlanCommands.UpdateNutritionalPlanCommand;
-import com.nutrihealth.backend.NutritionalPlanning.domain.model.commands.PlannedFoodsCommands.CreatePlannedFoodCommand;
-import com.nutrihealth.backend.NutritionalPlanning.domain.model.commands.ScheduledMealCommands.CreateScheduledMealCommand;
-import com.nutrihealth.backend.NutritionalPlanning.domain.model.commands.ScheduledMealCommands.DeleteScheduledMealCommand;
-import com.nutrihealth.backend.NutritionalPlanning.domain.model.entity.DailyPlan;
-import com.nutrihealth.backend.NutritionalPlanning.domain.model.entity.PlannedFood;
-import com.nutrihealth.backend.NutritionalPlanning.domain.model.entity.ScheduledMeal;
+import com.nutrihealth.backend.NutritionalPlanning.domain.model.commands.NutritionPlanCommands.DeleteNutritionalPlanCommand;
 import com.nutrihealth.backend.NutritionalPlanning.domain.services.NutritionalPlanCommandService;
 import org.springframework.stereotype.Service;
 
@@ -25,6 +14,7 @@ public class NutritionalPlanCommandServiceImpl implements NutritionalPlanCommand
     private final NutritionalPlanRepository repository;
 
     public NutritionalPlanCommandServiceImpl(NutritionalPlanRepository repository) {
+
         this.repository = repository;
     }
 
@@ -33,5 +23,14 @@ public class NutritionalPlanCommandServiceImpl implements NutritionalPlanCommand
         var plan = new NutritionalPlan(command);
         repository.save(plan);
         return Optional.of(plan);
+    }
+
+    @Override
+    public void handle(DeleteNutritionalPlanCommand command) {
+        Optional<NutritionalPlan> plan = repository.findById(command.nutritionalPlanId());
+        if (plan.isEmpty()) {
+            throw new IllegalArgumentException("No such NutritionalPlan");
+        }
+        repository.delete(plan.get());
     }
 }
