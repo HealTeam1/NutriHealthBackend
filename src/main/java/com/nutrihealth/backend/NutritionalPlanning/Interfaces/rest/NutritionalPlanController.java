@@ -1,16 +1,17 @@
 package com.nutrihealth.backend.NutritionalPlanning.Interfaces.rest;
 
-import com.nutrihealth.backend.NutritionalPlanning.Interfaces.rest.resources.CreateNutritionalPlanResource;
+import com.nutrihealth.backend.NutritionalPlanning.Interfaces.rest.resources.create.CreateNutritionalPlanResource;
 import com.nutrihealth.backend.NutritionalPlanning.Interfaces.rest.transform.create.CreateNutritionalPlanCommandFromResourceAssembler;
 import com.nutrihealth.backend.NutritionalPlanning.application.internal.commandservices.NutritionalPlanCommandServiceImpl;
 import com.nutrihealth.backend.NutritionalPlanning.application.internal.queryservices.NutritionalPlanQueryServiceImpl;
 import com.nutrihealth.backend.NutritionalPlanning.domain.model.aggregates.NutritionalPlan;
-import com.nutrihealth.backend.NutritionalPlanning.domain.model.commands.NutritionPlanCommands.CreateNutritionalPlanCommand;
 import com.nutrihealth.backend.NutritionalPlanning.domain.model.commands.NutritionPlanCommands.DeleteNutritionalPlanCommand;
+import com.nutrihealth.backend.NutritionalPlanning.domain.model.queries.GetAllNutritionalPlanByUserIdQuery;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
 import java.util.Optional;
 
 @RestController
@@ -37,5 +38,11 @@ public class NutritionalPlanController {
         DeleteNutritionalPlanCommand cmd = new DeleteNutritionalPlanCommand(planId);
         commandService.handle(cmd);
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+    }
+    @GetMapping("/{userId}")
+    public ResponseEntity<List<NutritionalPlan>> getNutritionalPlan(@PathVariable Long userId) {
+        GetAllNutritionalPlanByUserIdQuery query = new GetAllNutritionalPlanByUserIdQuery(userId);
+        Optional<List<NutritionalPlan>> plans = queryService.handle(query);
+        return new ResponseEntity<>(plans.get(), HttpStatus.OK);
     }
 }

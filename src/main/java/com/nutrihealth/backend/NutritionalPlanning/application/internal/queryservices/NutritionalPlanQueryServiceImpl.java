@@ -3,6 +3,7 @@ package com.nutrihealth.backend.NutritionalPlanning.application.internal.queryse
 import com.nutrihealth.backend.NutritionalPlanning.Infrastructure.persistence.jpa.repositories.NutritionalPlanRepository;
 import com.nutrihealth.backend.NutritionalPlanning.domain.model.aggregates.NutritionalPlan;
 import com.nutrihealth.backend.NutritionalPlanning.domain.model.entity.DailyPlan;
+import com.nutrihealth.backend.NutritionalPlanning.domain.model.queries.GetAllNutritionalPlanByUserIdQuery;
 import com.nutrihealth.backend.NutritionalPlanning.domain.model.queries.GetDailyPlanByIdAndPlanIdQuery;
 import com.nutrihealth.backend.NutritionalPlanning.domain.model.queries.GetNutritionalPlanByIdQuery;
 import com.nutrihealth.backend.NutritionalPlanning.domain.model.queries.GetUserNutritionalPlanQuery;
@@ -23,21 +24,11 @@ public class NutritionalPlanQueryServiceImpl  implements NutritionalPlanQuerySer
 
 
     @Override
-    public Optional<NutritionalPlan> handle(GetNutritionalPlanByIdQuery query) {
-        return repository.findById(query.planId());
+    public Optional<List<NutritionalPlan>> handle(GetAllNutritionalPlanByUserIdQuery query) {
+        var plans = repository.findAllByUserId(query.userId());
+        if (plans.isEmpty()) {
+            throw new IllegalArgumentException("No plans found for user id " + query.userId());
+        }
+        return Optional.of(plans);
     }
-
-    @Override
-    public List<NutritionalPlan> handle(GetUserNutritionalPlanQuery query) {
-        return repository.findAllByUserId(query.userId());
-    }
-
-    @Override
-    public List<DailyPlan> handle(GetDailyPlanByIdAndPlanIdQuery query) {
-        return repository.findByUserIdAndId(query.userId(),query.planId())
-                .map(NutritionalPlan::getDailyPlans)
-                .orElse(List.of());
-    }
-
-
 }
