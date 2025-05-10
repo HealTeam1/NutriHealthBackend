@@ -4,6 +4,7 @@ import com.nutrihealth.backend.NutritionalPlanning.Infrastructure.persistence.jp
 import com.nutrihealth.backend.NutritionalPlanning.domain.model.aggregates.NutritionalPlan;
 import com.nutrihealth.backend.NutritionalPlanning.domain.model.commands.NutritionPlanCommands.CreateNutritionalPlanCommand;
 import com.nutrihealth.backend.NutritionalPlanning.domain.model.commands.NutritionPlanCommands.DeleteNutritionalPlanCommand;
+import com.nutrihealth.backend.NutritionalPlanning.domain.model.commands.NutritionPlanCommands.UpdateNutritionalPlanCommand;
 import com.nutrihealth.backend.NutritionalPlanning.domain.services.NutritionalPlanCommandService;
 import org.springframework.stereotype.Service;
 
@@ -32,5 +33,17 @@ public class NutritionalPlanCommandServiceImpl implements NutritionalPlanCommand
             throw new IllegalArgumentException("No such NutritionalPlan");
         }
         repository.delete(plan.get());
+    }
+
+    @Override
+    public Optional<NutritionalPlan> handle(UpdateNutritionalPlanCommand command, Long planId) {
+        Optional<NutritionalPlan> plan = repository.findById(planId);
+        if (plan.isEmpty()){
+            throw new IllegalArgumentException("No such NutritionalPlan");
+        }
+        var planFinded= plan.get();
+        planFinded.update(command);
+        repository.save(planFinded);
+        return Optional.of(planFinded);
     }
 }

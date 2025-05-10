@@ -1,12 +1,10 @@
 package com.nutrihealth.backend.NutritionalPlanning.domain.model.aggregates;
 
 import com.fasterxml.jackson.annotation.JsonManagedReference;
+import com.nutrihealth.backend.NutritionalPlanning.domain.model.commands.DailyPlanCommands.UpdateDailyPlanCommand;
 import com.nutrihealth.backend.NutritionalPlanning.domain.model.commands.NutritionPlanCommands.CreateNutritionalPlanCommand;
 import com.nutrihealth.backend.NutritionalPlanning.domain.model.commands.NutritionPlanCommands.UpdateNutritionalPlanCommand;
 import com.nutrihealth.backend.NutritionalPlanning.domain.model.entity.DailyPlan;
-import com.nutrihealth.backend.NutritionalPlanning.domain.model.entity.ScheduledMeal;
-import com.nutrihealth.backend.NutritionalPlanning.domain.model.valueobjects.TimeDay;
-import com.nutrihealth.backend.NutritionalPlanning.domain.model.valueobjects.WeekDay;
 import com.nutrihealth.backend.shared.domain.model.aggregates.AuditableAbstractAggregateRoot;
 import jakarta.persistence.*;
 import lombok.Getter;
@@ -58,26 +56,25 @@ public class NutritionalPlan extends AuditableAbstractAggregateRoot<NutritionalP
         }
     }
 
-    public void updateNutritionPlan(UpdateNutritionalPlanCommand command){
-        this.startDate = command.startDate();
-        this.name= command.name();
-        this.active = command.active();
-        this.description = command.description();
+    public void update(UpdateNutritionalPlanCommand command){
+        this.startDate = command.startDate() == null ? this.startDate : command.startDate();
+        this.name= command.name() == null ? this.name : command.name();
+        this.description = command.description() == null ? this.description : command.description();
+        this.active = command.active() ;
+        if(command.dailyPlans() != null) {
+            command.dailyPlans().forEach(this::updateDailyPlan);
+        }
+
     }
 
     public void addDailyPlan(DailyPlan dailyPlan){
         dailyPlan.setNutritionalPlan(this);
         this.dailyPlans.add(dailyPlan);
     }
-    public DailyPlan getDailyPlan(WeekDay weekDay){
-        return this.dailyPlans
-                .stream()
-                .filter(dp->dp.getWeekDay().equals(weekDay))
-                .findFirst()
-                .orElseThrow(()->new IllegalArgumentException("Daily Plan not found"));
-    }
-    public void deleteDailyPlan(WeekDay weekDay){
-        this.dailyPlans.removeIf(dp->dp.getWeekDay().equals(weekDay));
+    public void updateDailyPlan(UpdateDailyPlanCommand command){
+        dailyPlans.forEach(dailyPlan -> {
+            dailyPlan.update(command);
+        });
     }
 
 }

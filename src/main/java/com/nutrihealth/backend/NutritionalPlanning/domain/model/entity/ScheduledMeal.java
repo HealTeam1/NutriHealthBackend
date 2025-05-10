@@ -2,7 +2,9 @@ package com.nutrihealth.backend.NutritionalPlanning.domain.model.entity;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
+import com.nutrihealth.backend.NutritionalPlanning.domain.model.commands.PlannedFoodsCommands.UpdatePlannedFoodCommand;
 import com.nutrihealth.backend.NutritionalPlanning.domain.model.commands.ScheduledMealCommands.CreateScheduledMealCommand;
+import com.nutrihealth.backend.NutritionalPlanning.domain.model.commands.ScheduledMealCommands.UpdateScheduledMealCommand;
 import com.nutrihealth.backend.NutritionalPlanning.domain.model.valueobjects.TimeDay;
 import jakarta.persistence.*;
 import lombok.Getter;
@@ -49,6 +51,19 @@ public class ScheduledMeal {
                         addPlannedFood(plannedFood);
                     });
         }
+    }
+    public void update(UpdateScheduledMealCommand command){
+        this.timeDay= command.timeDay() == null ? this.timeDay : command.timeDay();
+        this.recipeId= command.recipeFood() == null ? this.recipeId : command.recipeFood();
+        if(command.plannedFoods() != null){
+            command.plannedFoods().forEach(this::updatePlannedFood);
+        }
+
+    }
+    public void updatePlannedFood(UpdatePlannedFoodCommand command){
+        this.plannedFoods.forEach(plannedFood -> {
+            plannedFood.update(command);
+        });
     }
 
 
