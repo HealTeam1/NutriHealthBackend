@@ -7,6 +7,7 @@ import java.util.Date;
 import java.util.List;
 
 public record UpdateNutritionalPlanCommand(
+        Long id,
         String name,
         Date startDate,
         String description,

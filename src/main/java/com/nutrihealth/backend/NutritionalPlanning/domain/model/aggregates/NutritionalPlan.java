@@ -14,6 +14,9 @@ import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.Map;
+
+import static java.util.stream.Collectors.toMap;
 
 @Getter
 @Setter
@@ -62,7 +65,18 @@ public class NutritionalPlan extends AuditableAbstractAggregateRoot<NutritionalP
         this.description = command.description() == null ? this.description : command.description();
         this.active = command.active() ;
         if(command.dailyPlans() != null) {
-            command.dailyPlans().forEach(this::updateDailyPlan);
+
+            Map<Long, UpdateDailyPlanCommand> mapCmd = command.dailyPlans().stream()
+                    .filter(c-> c.id()!=null)
+                    .collect(toMap(c -> c.id(), c -> c));
+
+            this.dailyPlans.forEach(dp->{
+                if(mapCmd.containsKey(dp.getId())){
+                    dp.update(mapCmd.get(dp.getId()));
+                }
+            }
+            );
+
         }
 
     }
@@ -70,11 +84,6 @@ public class NutritionalPlan extends AuditableAbstractAggregateRoot<NutritionalP
     public void addDailyPlan(DailyPlan dailyPlan){
         dailyPlan.setNutritionalPlan(this);
         this.dailyPlans.add(dailyPlan);
-    }
-    public void updateDailyPlan(UpdateDailyPlanCommand command){
-        dailyPlans.forEach(dailyPlan -> {
-            dailyPlan.update(command);
-        });
     }
 
 }

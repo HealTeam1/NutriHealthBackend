@@ -7,6 +7,7 @@ import com.nutrihealth.backend.NutritionalPlanning.domain.model.valueobjects.Wee
 import java.util.List;
 
 public record UpdateDailyPlanCommand(
+        Long id,
         WeekDay weekDay,
         List<UpdateScheduledMealCommand> scheduledMeals
 ) {

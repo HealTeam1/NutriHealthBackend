@@ -6,6 +6,7 @@ import com.nutrihealth.backend.NutritionalPlanning.domain.model.valueobjects.Tim
 import java.util.List;
 
 public record UpdateScheduledMealCommand(
+        Long id,
         TimeDay timeDay,
         Long recipeFood,
         List<UpdatePlannedFoodCommand> plannedFoods

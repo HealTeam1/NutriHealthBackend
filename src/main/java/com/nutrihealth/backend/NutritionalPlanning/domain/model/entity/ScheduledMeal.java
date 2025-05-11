@@ -12,6 +12,9 @@ import lombok.Setter;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
+
+import static java.util.stream.Collectors.toMap;
 
 @Entity
 @Getter
@@ -55,15 +58,19 @@ public class ScheduledMeal {
     public void update(UpdateScheduledMealCommand command){
         this.timeDay= command.timeDay() == null ? this.timeDay : command.timeDay();
         this.recipeId= command.recipeFood() == null ? this.recipeId : command.recipeFood();
-        if(command.plannedFoods() != null){
-            command.plannedFoods().forEach(this::updatePlannedFood);
+        if(plannedFoods!=null){
+            Map<Long,UpdatePlannedFoodCommand> mapCmd = command.plannedFoods().stream()
+                    .filter(c->c.foodId()!=null)
+                    .collect(toMap(c->c.foodId(),c->c));
+
+            this.plannedFoods.forEach(plannedFood -> {
+                if(mapCmd.containsKey(plannedFood.getId())){
+                    plannedFood.update(mapCmd.get(plannedFood.getId()));
+                }
+                    }
+            );
         }
 
-    }
-    public void updatePlannedFood(UpdatePlannedFoodCommand command){
-        this.plannedFoods.forEach(plannedFood -> {
-            plannedFood.update(command);
-        });
     }
 
 

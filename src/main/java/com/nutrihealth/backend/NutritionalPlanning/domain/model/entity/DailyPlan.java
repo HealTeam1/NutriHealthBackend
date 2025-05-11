@@ -13,6 +13,9 @@ import lombok.Setter;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
+
+import static java.util.stream.Collectors.toMap;
 
 @Entity
 @Table(name = "daily_plans")
@@ -54,17 +57,18 @@ public class DailyPlan {
     public void update(UpdateDailyPlanCommand command) {
         this.weekDay = command.weekDay() == null ? this.weekDay : command.weekDay();
         if (command.scheduledMeals() != null) {
-            command.scheduledMeals().forEach(this::updateScheduledMeal);
+            Map<Long,UpdateScheduledMealCommand> mapCmd = command.scheduledMeals().stream()
+                    .filter(c-> c.id()!=null)
+                    .collect(toMap(c->c.id(),c->c));
+
+            this.scheduledMeals.forEach(scheduledMeal -> {
+                if(mapCmd.containsKey(scheduledMeal.getId())){
+                    scheduledMeal.update(mapCmd.get(scheduledMeal.getId()));
+                }
+            });
         }
 
     }
-
-    public void updateScheduledMeal(UpdateScheduledMealCommand command) {
-        this.scheduledMeals.forEach(scheduledMeal -> {
-            scheduledMeal.update(command);
-        });
-    }
-
 
     public void addScheduledMeal(ScheduledMeal scheduledMeal) {
         scheduledMeal.setDailyPlan(this);
