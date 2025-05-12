@@ -2,9 +2,11 @@ package com.nutrihealth.backend.NutritionalPlanning.application.internal.command
 
 import com.nutrihealth.backend.NutritionalPlanning.Infrastructure.persistence.jpa.repositories.NutritionalPlanRepository;
 import com.nutrihealth.backend.NutritionalPlanning.domain.model.aggregates.NutritionalPlan;
+import com.nutrihealth.backend.NutritionalPlanning.domain.model.commands.DailyPlanCommands.CreateDailyPlanCommand;
 import com.nutrihealth.backend.NutritionalPlanning.domain.model.commands.NutritionPlanCommands.CreateNutritionalPlanCommand;
 import com.nutrihealth.backend.NutritionalPlanning.domain.model.commands.NutritionPlanCommands.DeleteNutritionalPlanCommand;
 import com.nutrihealth.backend.NutritionalPlanning.domain.model.commands.NutritionPlanCommands.UpdateNutritionalPlanCommand;
+import com.nutrihealth.backend.NutritionalPlanning.domain.model.entity.DailyPlan;
 import com.nutrihealth.backend.NutritionalPlanning.domain.services.NutritionalPlanCommandService;
 import org.springframework.stereotype.Service;
 
@@ -45,5 +47,20 @@ public class NutritionalPlanCommandServiceImpl implements NutritionalPlanCommand
         planFinded.update(command);
         repository.save(planFinded);
         return Optional.of(planFinded);
+    }
+
+    @Override
+    public Optional<DailyPlan> handle(CreateDailyPlanCommand command,Long planId) {
+        var plan = repository.findById(planId);
+        if (plan.isEmpty()) {
+            throw new IllegalArgumentException("No such NutritionalPlan");
+        }
+        DailyPlan dailyPlan = new DailyPlan(command);
+        plan.get().addDailyPlan(dailyPlan);
+        /*
+        TODO: VERIFICAR QUE EL DIA NO SEA EL MISMO QUE OTRO DIA
+         */
+        repository.save(plan.get());
+        return Optional.of(dailyPlan);
     }
 }

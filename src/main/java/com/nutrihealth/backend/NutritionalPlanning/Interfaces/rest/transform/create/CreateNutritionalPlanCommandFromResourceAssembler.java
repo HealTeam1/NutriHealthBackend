@@ -4,14 +4,14 @@ import com.nutrihealth.backend.NutritionalPlanning.Interfaces.rest.resources.cre
 import com.nutrihealth.backend.NutritionalPlanning.domain.model.commands.NutritionPlanCommands.CreateNutritionalPlanCommand;
 
 public class CreateNutritionalPlanCommandFromResourceAssembler {
-    public static CreateNutritionalPlanCommand toCommand(CreateNutritionalPlanResource resource, Long userId) {
+    public static CreateNutritionalPlanCommand toCommand(CreateNutritionalPlanResource resource) {
         return new CreateNutritionalPlanCommand(
-                userId,
+                resource.userId(),
                 resource.startDate(),
                 resource.name(),
                 resource.description(),
                 resource.active(),
-                resource.dailyplans().stream()
+                resource.dailyPlans().stream()
                         .map(CreateDailyPlanCommandFromResourceAssembler::toCommand)
                         .toList()
         );

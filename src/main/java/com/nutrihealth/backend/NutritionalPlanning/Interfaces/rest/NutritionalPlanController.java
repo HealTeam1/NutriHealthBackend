@@ -1,7 +1,9 @@
 package com.nutrihealth.backend.NutritionalPlanning.Interfaces.rest;
 
 import com.nutrihealth.backend.NutritionalPlanning.Interfaces.rest.resources.create.CreateNutritionalPlanResource;
+import com.nutrihealth.backend.NutritionalPlanning.Interfaces.rest.resources.entitiesResources.NutritionalPlanResource;
 import com.nutrihealth.backend.NutritionalPlanning.Interfaces.rest.transform.create.CreateNutritionalPlanCommandFromResourceAssembler;
+import com.nutrihealth.backend.NutritionalPlanning.Interfaces.rest.transform.entities.NutritionalPlanResourceFromEntityAssembler;
 import com.nutrihealth.backend.NutritionalPlanning.application.internal.commandservices.NutritionalPlanCommandServiceImpl;
 import com.nutrihealth.backend.NutritionalPlanning.application.internal.queryservices.NutritionalPlanQueryServiceImpl;
 import com.nutrihealth.backend.NutritionalPlanning.domain.model.aggregates.NutritionalPlan;
@@ -26,13 +28,15 @@ public class NutritionalPlanController {
         this.queryService = queryService;
     }
 
-    @PostMapping("/{userId}")
-    public ResponseEntity<NutritionalPlan> createNutritionalPlan(@PathVariable Long userId,
-                                                                 @RequestBody CreateNutritionalPlanResource resource
+    @PostMapping("/add-nutritional-plan")
+    public ResponseEntity<NutritionalPlanResource> createNutritionalPlan(@RequestBody CreateNutritionalPlanResource resource
                                                                  ) {
-        Optional<NutritionalPlan> nutritionalPlan= commandService.handle(CreateNutritionalPlanCommandFromResourceAssembler.toCommand(resource,userId));
+        Optional<NutritionalPlan> nutritionalPlan= commandService.handle(CreateNutritionalPlanCommandFromResourceAssembler.toCommand(resource));
+        var planCreated= nutritionalPlan.get();
 
-        return nutritionalPlan.map(plan -> new ResponseEntity<>(plan, HttpStatus.CREATED)).orElseGet(() -> new ResponseEntity<>(HttpStatus.NOT_FOUND));
+        return new ResponseEntity<>(NutritionalPlanResourceFromEntityAssembler.toResource(planCreated), HttpStatus.CREATED);
+
+
     }
     @DeleteMapping("/{planId}")
     public ResponseEntity<Void> deleteNutritionalPlan(@PathVariable Long planId) {
