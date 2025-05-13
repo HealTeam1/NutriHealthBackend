@@ -55,22 +55,21 @@ public class ScheduledMeal {
                     });
         }
     }
-    public void update(UpdateScheduledMealCommand command){
-        this.timeDay= command.timeDay() == null ? this.timeDay : command.timeDay();
-        this.recipeId= command.recipeFood() == null ? this.recipeId : command.recipeFood();
-        if(plannedFoods!=null){
-            Map<Long,UpdatePlannedFoodCommand> mapCmd = command.plannedFoods().stream()
-                    .filter(c->c.foodId()!=null)
-                    .collect(toMap(c->c.foodId(),c->c));
+    public void update(UpdateScheduledMealCommand command) {
+        //this.timeDay= command.timeDay() == null ? this.timeDay : command.timeDay();
+        this.recipeId = command.recipeFood() == null ? this.recipeId : command.recipeFood();
+        if (plannedFoods != null) {
+            Map<Long, UpdatePlannedFoodCommand> mapCmd = command.plannedFoods().stream()
+                    .filter(c -> c.foodId() != null)
+                    .collect(toMap(c -> c.foodId(), c -> c));
 
             this.plannedFoods.forEach(plannedFood -> {
-                if(mapCmd.containsKey(plannedFood.getId())){
-                    plannedFood.update(mapCmd.get(plannedFood.getId()));
-                }
+                        if (mapCmd.containsKey(plannedFood.getId())) {
+                            plannedFood.update(mapCmd.get(plannedFood.getId()));
+                        }
                     }
             );
         }
-
     }
 
 

@@ -20,13 +20,12 @@ public class DailyPlanController {
         this.commandService = commandService;
     }
 
-    @PostMapping("/{planId}/add-dailyPlan'")
+    @PostMapping("/{planId}/add-dailyPlan")
     public ResponseEntity<DailyPlanResource> createDailyPlan(@PathVariable Long planId,
                                                              @RequestBody CreateDailyPlanResource resource) {
         var dailyPlan = commandService.handle(CreateDailyPlanCommandFromResourceAssembler.toCommand(resource), planId);
         var dailyPlanCreated = dailyPlan.get();
         return new ResponseEntity<>(DailyPlanResourceFromEntityAssembler.toResource(dailyPlanCreated),CREATED);
     }
-
 
 }
