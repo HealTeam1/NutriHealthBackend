@@ -5,11 +5,13 @@ import com.nutrihealth.backend.NutritionalPlanning.Interfaces.rest.resources.cre
 import com.nutrihealth.backend.NutritionalPlanning.Interfaces.rest.resources.entitiesResources.NutritionalPlanResource;
 import com.nutrihealth.backend.NutritionalPlanning.Interfaces.rest.resources.entitiesResources.PlannedFoodResource;
 import com.nutrihealth.backend.NutritionalPlanning.Interfaces.rest.resources.entitiesResources.ScheduledMealResource;
+import com.nutrihealth.backend.NutritionalPlanning.Interfaces.rest.resources.update.UpdatePlannedFoodResource;
 import com.nutrihealth.backend.NutritionalPlanning.Interfaces.rest.transform.create.CreateNutritionalPlanCommandFromResourceAssembler;
 import com.nutrihealth.backend.NutritionalPlanning.Interfaces.rest.transform.create.CreatePlannedFoodCommandFromResourceAssembler;
 import com.nutrihealth.backend.NutritionalPlanning.Interfaces.rest.transform.entities.NutritionalPlanResourceFromEntityAssembler;
 import com.nutrihealth.backend.NutritionalPlanning.Interfaces.rest.transform.entities.PlannedFoodResourceFromEntityAssembler;
 import com.nutrihealth.backend.NutritionalPlanning.Interfaces.rest.transform.entities.ScheduledMealResourceFromEntityAssembler;
+import com.nutrihealth.backend.NutritionalPlanning.Interfaces.rest.transform.update.UpdatePlannedFoodCommandFromResourceAssembler;
 import com.nutrihealth.backend.NutritionalPlanning.application.internal.commandservices.NutritionalPlanCommandServiceImpl;
 import com.nutrihealth.backend.NutritionalPlanning.application.internal.queryservices.NutritionalPlanQueryServiceImpl;
 import com.nutrihealth.backend.NutritionalPlanning.domain.model.aggregates.NutritionalPlan;
@@ -91,5 +93,12 @@ public class NutritionalPlanController {
         var cmd = new DeletePlannedFoodCommand(id);
         commandService.handle(cmd);
         return new ResponseEntity<>(HttpStatus.ACCEPTED);
+    }
+    @PutMapping("/plannedFood/{id}")
+    public ResponseEntity<PlannedFoodResource> editPlannedFood(@PathVariable Long id,
+                                                               @RequestBody UpdatePlannedFoodResource resource){
+        var plannedFood = commandService.handle(UpdatePlannedFoodCommandFromResourceAssembler.toCommand(resource),id);
+        return new ResponseEntity<>(PlannedFoodResourceFromEntityAssembler.toResource(plannedFood.get()),OK);
+
     }
 }

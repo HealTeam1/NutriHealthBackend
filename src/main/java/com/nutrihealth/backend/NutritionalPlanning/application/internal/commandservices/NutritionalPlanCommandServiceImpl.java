@@ -10,6 +10,7 @@ import com.nutrihealth.backend.NutritionalPlanning.domain.model.commands.Nutriti
 import com.nutrihealth.backend.NutritionalPlanning.domain.model.commands.NutritionPlanCommands.UpdateNutritionalPlanCommand;
 import com.nutrihealth.backend.NutritionalPlanning.domain.model.commands.PlannedFoodsCommands.CreatePlannedFoodCommand;
 import com.nutrihealth.backend.NutritionalPlanning.domain.model.commands.PlannedFoodsCommands.DeletePlannedFoodCommand;
+import com.nutrihealth.backend.NutritionalPlanning.domain.model.commands.PlannedFoodsCommands.UpdatePlannedFoodCommand;
 import com.nutrihealth.backend.NutritionalPlanning.domain.model.commands.ScheduledMealCommands.UpdateRecipeCommand;
 import com.nutrihealth.backend.NutritionalPlanning.domain.model.commands.ScheduledMealCommands.UpdateScheduledMealCommand;
 import com.nutrihealth.backend.NutritionalPlanning.domain.model.entity.DailyPlan;
@@ -107,6 +108,18 @@ public class NutritionalPlanCommandServiceImpl implements NutritionalPlanCommand
             throw new IllegalArgumentException("No such PlannedFood");
         }
         repositoryFood.delete(plannedFood.get());
+    }
+
+    @Override
+    public Optional<PlannedFood> handle(UpdatePlannedFoodCommand command, Long plannedFoodId) {
+        Optional<PlannedFood> plannedFood = repositoryFood.findById(plannedFoodId);
+        if (plannedFood.isEmpty()) {
+            throw new IllegalArgumentException("No such PlannedFood");
+        }
+        plannedFood.get().update(command);
+        repositoryFood.save(plannedFood.get());
+        var pf = plannedFood.get();
+        return Optional.of(pf);
     }
 
 
