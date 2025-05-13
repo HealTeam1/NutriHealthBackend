@@ -7,6 +7,6 @@ import java.util.List;
 public record CreateScheduledMealResource(
         TimeDay timeDay,
         Long recipeId,
-        List<CreatePlannedFoodResource> plannedFoodResources
+        List<CreatePlannedFoodResource> plannedFoods
 ) {
 }

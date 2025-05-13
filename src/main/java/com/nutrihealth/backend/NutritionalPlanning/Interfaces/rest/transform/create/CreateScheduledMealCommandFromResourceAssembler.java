@@ -8,7 +8,7 @@ public class CreateScheduledMealCommandFromResourceAssembler {
         return new CreateScheduledMealCommand(
                 resource.recipeId(),
                 resource.timeDay(),
-                resource.plannedFoodResources().stream()
+                resource.plannedFoods().stream()
                         .map(CreatePlannedFoodCommandFromResourceAssembler::toCommand)
                         .toList()
         );
