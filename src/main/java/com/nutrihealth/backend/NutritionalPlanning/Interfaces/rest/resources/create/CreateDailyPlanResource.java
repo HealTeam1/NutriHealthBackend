@@ -3,7 +3,6 @@ package com.nutrihealth.backend.NutritionalPlanning.Interfaces.rest.resources.cr
 import com.nutrihealth.backend.NutritionalPlanning.domain.model.valueobjects.WeekDay;
 
 import java.util.List;
-import java.util.Optional;
 
 public record CreateDailyPlanResource(
         WeekDay weekDay,
