@@ -1,17 +1,17 @@
 package com.nutrihealth.backend.NutritionalPlanning.application.internal.commandservices;
 
 import com.nutrihealth.backend.NutritionalPlanning.Infrastructure.persistence.jpa.repositories.NutritionalPlanRepository;
+import com.nutrihealth.backend.NutritionalPlanning.Infrastructure.persistence.jpa.repositories.PlannedFoodRepository;
+import com.nutrihealth.backend.NutritionalPlanning.Infrastructure.persistence.jpa.repositories.ScheduledMealRepository;
 import com.nutrihealth.backend.NutritionalPlanning.domain.model.aggregates.NutritionalPlan;
 import com.nutrihealth.backend.NutritionalPlanning.domain.model.commands.DailyPlanCommands.CreateDailyPlanCommand;
-import com.nutrihealth.backend.NutritionalPlanning.domain.model.commands.DailyPlanCommands.DeleteDailyPlanCommand;
-import com.nutrihealth.backend.NutritionalPlanning.domain.model.commands.DailyPlanCommands.UpdateDailyPlanCommand;
 import com.nutrihealth.backend.NutritionalPlanning.domain.model.commands.NutritionPlanCommands.CreateNutritionalPlanCommand;
-import com.nutrihealth.backend.NutritionalPlanning.domain.model.commands.NutritionPlanCommands.DeleteNutritionPlanByUserIdAndId;
-import com.nutrihealth.backend.NutritionalPlanning.domain.model.commands.NutritionPlanCommands.UpdateActiveNutritionPlanCommand;
+import com.nutrihealth.backend.NutritionalPlanning.domain.model.commands.NutritionPlanCommands.DeleteNutritionalPlanCommand;
 import com.nutrihealth.backend.NutritionalPlanning.domain.model.commands.NutritionPlanCommands.UpdateNutritionalPlanCommand;
 import com.nutrihealth.backend.NutritionalPlanning.domain.model.commands.PlannedFoodsCommands.CreatePlannedFoodCommand;
-import com.nutrihealth.backend.NutritionalPlanning.domain.model.commands.ScheduledMealCommands.CreateScheduledMealCommand;
-import com.nutrihealth.backend.NutritionalPlanning.domain.model.commands.ScheduledMealCommands.DeleteScheduledMealCommand;
+import com.nutrihealth.backend.NutritionalPlanning.domain.model.commands.PlannedFoodsCommands.DeletePlannedFoodCommand;
+import com.nutrihealth.backend.NutritionalPlanning.domain.model.commands.PlannedFoodsCommands.UpdatePlannedFoodCommand;
+import com.nutrihealth.backend.NutritionalPlanning.domain.model.commands.ScheduledMealCommands.UpdateRecipeCommand;
 import com.nutrihealth.backend.NutritionalPlanning.domain.model.entity.DailyPlan;
 import com.nutrihealth.backend.NutritionalPlanning.domain.model.entity.PlannedFood;
 import com.nutrihealth.backend.NutritionalPlanning.domain.model.entity.ScheduledMeal;
@@ -23,9 +23,14 @@ import java.util.Optional;
 @Service
 public class NutritionalPlanCommandServiceImpl implements NutritionalPlanCommandService {
     private final NutritionalPlanRepository repository;
+    private final ScheduledMealRepository repositoryMeal;
+    private final PlannedFoodRepository repositoryFood;
 
-    public NutritionalPlanCommandServiceImpl(NutritionalPlanRepository repository) {
+    public NutritionalPlanCommandServiceImpl(NutritionalPlanRepository repository, ScheduledMealRepository repositoryMeal, PlannedFoodRepository repositoryFood) {
+
         this.repository = repository;
+        this.repositoryMeal = repositoryMeal;
+        this.repositoryFood = repositoryFood;
     }
 
     @Override
@@ -36,88 +41,85 @@ public class NutritionalPlanCommandServiceImpl implements NutritionalPlanCommand
     }
 
     @Override
-    public Long handle(DeleteNutritionPlanByUserIdAndId command) {
-        var plan = repository.findByUserIdAndId(command.userId(), command.planId())
-                .orElseThrow(() -> new IllegalArgumentException("Plan Not Founded"));
-        repository.delete(plan);
-        return command.planId();
+    public void handle(DeleteNutritionalPlanCommand command) {
+        Optional<NutritionalPlan> plan = repository.findById(command.nutritionalPlanId());
+        if (plan.isEmpty()) {
+            throw new IllegalArgumentException("No such NutritionalPlan");
+        }
+        repository.delete(plan.get());
     }
 
     @Override
-    public Optional<NutritionalPlan> handle(UpdateActiveNutritionPlanCommand command) {
-        var plan = repository.findByUserIdAndId(command.userId(),command.planId() )
-                .orElseThrow(() -> new IllegalArgumentException("Plan Not Founded"));
-        plan.setActive(command.active());
-        repository.save(plan);
-        return Optional.of(plan);
+    public Optional<NutritionalPlan> handle(UpdateNutritionalPlanCommand command, Long planId) {
+        Optional<NutritionalPlan> plan = repository.findById(planId);
+        if (plan.isEmpty()){
+            throw new IllegalArgumentException("No such NutritionalPlan");
+        }
+        var planFinded= plan.get();
+        planFinded.update(command);
+        repository.save(planFinded);
+        return Optional.of(planFinded);
     }
 
     @Override
-    public Optional<NutritionalPlan> handle(UpdateNutritionalPlanCommand command) {
-        var plan = repository.findByUserIdAndId(command.userId(), command.planId())
-                .orElseThrow(() -> new IllegalArgumentException("Plan Not Founded"));
-        plan.updateNutritionPlan(command);
-        repository.save(plan);
-        return Optional.of(plan);
+    public Optional<DailyPlan> handle(CreateDailyPlanCommand command,Long planId) {
+        var plan = repository.findById(planId);
+        if (plan.isEmpty()) {
+            throw new IllegalArgumentException("No such NutritionalPlan");
+        }
+        DailyPlan dailyPlan = new DailyPlan(command);
+        plan.get().addDailyPlan(dailyPlan);
+        /*
+        TODO: VERIFICAR QUE EL DIA NO SEA EL MISMO QUE OTRO DIA
+         */
+        repository.save(plan.get());
+        return Optional.of(dailyPlan);
     }
 
     @Override
-    public Optional<DailyPlan> handle(CreateDailyPlanCommand command) {
-        var plan = repository.findByUserIdAndId(command.userId(), command.planId())
-                .orElseThrow(() -> new IllegalArgumentException("Plan Not Founded"));
-        var dp = new DailyPlan(command);
-        plan.addDailyPlan(dp);
-        repository.save(plan);
-        return Optional.of(dp);
+    public Optional<ScheduledMeal> handle(UpdateRecipeCommand command, Long scheduledMealId) {
+        Optional<ScheduledMeal> scheduledMeal = repositoryMeal.findById(scheduledMealId);
+        if (scheduledMeal.isEmpty()) {
+            throw new IllegalArgumentException("No such ScheduledMeal");
+        }
+        var sm = scheduledMeal.get();
+        sm.setRecipeId(command.recipeId());
+        repositoryMeal.save(sm);
+        return Optional.of(sm);
     }
 
     @Override
-    public void handle(DeleteDailyPlanCommand command) {
-        var plan = repository.findByUserIdAndId(command.userId(), command.planId())
-                .orElseThrow(() -> new IllegalArgumentException("Plan Not Founded"));
-        plan.deleteDailyPlan(command.weekDay());
-        repository.save(plan);
-
-    }
-
-    @Override
-    public Optional<DailyPlan> handle(UpdateDailyPlanCommand command) {
-        var plan = repository.findByUserIdAndId(command.userId(), command.planId())
-                .orElseThrow(() -> new IllegalArgumentException("Plan Not Founded"));
-        var dp = plan.getDailyPlan(command.weekDay());
-        dp.updateDailyPlan(command);
-        repository.save(plan);
-        return Optional.of(dp);
-    }
-
-    @Override
-    public Optional<ScheduledMeal> handle(CreateScheduledMealCommand command) {
-        var plan = repository.findByUserIdAndId(command.userId(), command.planId())
-                .orElseThrow(() -> new IllegalArgumentException("Plan Not Founded"));
-        var dp = plan.getDailyPlan(command.weekDay());
-        var scheduledMeal = new ScheduledMeal(command);
-        dp.addScheduledMeal(scheduledMeal);
-        repository.save(plan);
-        return Optional.of(scheduledMeal);
-    }
-
-    @Override
-    public void handle(DeleteScheduledMealCommand command) {
-        var plan = repository.findByUserIdAndId(command.userId(), command.planId())
-                .orElseThrow(() -> new IllegalArgumentException("Plan Not Founded"));
-        plan.getDailyPlan(command.weekDay()).deleteScheduledMeal(command.timeDay());
-        repository.save(plan);
-    }
-
-    @Override
-    public Optional<PlannedFood> handle(CreatePlannedFoodCommand command) {
-        var plan = repository.findByUserIdAndId(command.userId(), command.planId())
-                .orElseThrow(() -> new IllegalArgumentException("Plan Not Founded"));
-        var dp=plan.getDailyPlan(command.weekDay());
-        var sm = dp.getScheduledMeal(command.timeDay());
-        var plannedFood = new PlannedFood(command);
-        sm.addPlannedFood(plannedFood);
-        repository.save(plan);
+    public Optional<PlannedFood> handle(CreatePlannedFoodCommand command, Long scheduledMealId) {
+        Optional<ScheduledMeal> scheduledMeal = repositoryMeal.findById(scheduledMealId);
+        if (scheduledMeal.isEmpty()) {
+            throw new IllegalArgumentException("No such ScheduledMeal");
+        }
+        PlannedFood plannedFood = new PlannedFood(command);
+        scheduledMeal.get().addPlannedFood(plannedFood);
+        repositoryMeal.save(scheduledMeal.get());
         return Optional.of(plannedFood);
     }
+
+    @Override
+    public void handle(DeletePlannedFoodCommand command) {
+        Optional<PlannedFood> plannedFood = repositoryFood.findById(command.id());
+        if (plannedFood.isEmpty()) {
+            throw new IllegalArgumentException("No such PlannedFood");
+        }
+        repositoryFood.delete(plannedFood.get());
+    }
+
+    @Override
+    public Optional<PlannedFood> handle(UpdatePlannedFoodCommand command, Long plannedFoodId) {
+        Optional<PlannedFood> plannedFood = repositoryFood.findById(plannedFoodId);
+        if (plannedFood.isEmpty()) {
+            throw new IllegalArgumentException("No such PlannedFood");
+        }
+        plannedFood.get().update(command);
+        repositoryFood.save(plannedFood.get());
+        var pf = plannedFood.get();
+        return Optional.of(pf);
+    }
+
+
 }

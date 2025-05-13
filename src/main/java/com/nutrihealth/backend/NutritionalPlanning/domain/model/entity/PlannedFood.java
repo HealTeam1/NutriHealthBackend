@@ -2,6 +2,7 @@ package com.nutrihealth.backend.NutritionalPlanning.domain.model.entity;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.nutrihealth.backend.NutritionalPlanning.domain.model.commands.PlannedFoodsCommands.CreatePlannedFoodCommand;
+import com.nutrihealth.backend.NutritionalPlanning.domain.model.commands.PlannedFoodsCommands.UpdatePlannedFoodCommand;
 import com.nutrihealth.backend.NutritionalPlanning.domain.model.valueobjects.Unit;
 import jakarta.persistence.*;
 import lombok.Getter;
@@ -33,9 +34,13 @@ public class PlannedFood {
     protected PlannedFood() {}
 
     public PlannedFood(CreatePlannedFoodCommand command){
+        this.amount = command.amount() == null ? 0 : command.amount();
+        this.unit = command.unit() == null ? this.unit : command.unit();
+        this.foodId= command.foodId() == null ? this.foodId : command.foodId();
+    }
+    public void update(UpdatePlannedFoodCommand command){
         this.amount = command.amount();
         this.unit = command.unit();
-        this.foodId= command.foodId();
     }
 
 

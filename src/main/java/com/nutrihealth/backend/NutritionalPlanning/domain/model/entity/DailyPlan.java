@@ -5,7 +5,7 @@ import com.fasterxml.jackson.annotation.JsonManagedReference;
 import com.nutrihealth.backend.NutritionalPlanning.domain.model.aggregates.NutritionalPlan;
 import com.nutrihealth.backend.NutritionalPlanning.domain.model.commands.DailyPlanCommands.CreateDailyPlanCommand;
 import com.nutrihealth.backend.NutritionalPlanning.domain.model.commands.DailyPlanCommands.UpdateDailyPlanCommand;
-import com.nutrihealth.backend.NutritionalPlanning.domain.model.valueobjects.TimeDay;
+import com.nutrihealth.backend.NutritionalPlanning.domain.model.commands.ScheduledMealCommands.UpdateScheduledMealCommand;
 import com.nutrihealth.backend.NutritionalPlanning.domain.model.valueobjects.WeekDay;
 import jakarta.persistence.*;
 import lombok.Getter;
@@ -13,6 +13,9 @@ import lombok.Setter;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
+
+import static java.util.stream.Collectors.toMap;
 
 @Entity
 @Table(name = "daily_plans")
@@ -38,33 +41,38 @@ public class DailyPlan {
     @JsonManagedReference
     private List<ScheduledMeal> scheduledMeals = new ArrayList<>();
 
-    protected DailyPlan() {}
+    protected DailyPlan() {
+    }
+
     public DailyPlan(CreateDailyPlanCommand command) {
         this.weekDay = command.weekDay();
-        if(command.scheduledMeals() != null){
-            for(ScheduledMeal meal : command.scheduledMeals()){
-                this.scheduledMeals.add(meal);
-                meal.setDailyPlan(this);
-            }
+        if (command.scheduledMeals() != null) {
+            command.scheduledMeals().forEach(cmd -> {
+                ScheduledMeal scheduledMeal = new ScheduledMeal(cmd);
+                addScheduledMeal(scheduledMeal);
+            });
         }
     }
-    public ScheduledMeal getScheduledMeal(TimeDay timeDay){
-        return this.scheduledMeals
-                .stream()
-                .filter(scheduledMeal -> scheduledMeal.getTimeDay().equals(timeDay))
-                .findFirst()
-                .orElseThrow(()->new IllegalArgumentException("Scheduled Meal not found"));
+
+    public void update(UpdateDailyPlanCommand command) {
+        this.weekDay = command.weekDay() == null ? this.weekDay : command.weekDay();
+        if (command.scheduledMeals() != null) {
+            Map<Long,UpdateScheduledMealCommand> mapCmd = command.scheduledMeals().stream()
+                    .filter(c-> c.id()!=null)
+                    .collect(toMap(c->c.id(),c->c));
+
+            this.scheduledMeals.forEach(scheduledMeal -> {
+                if(mapCmd.containsKey(scheduledMeal.getId())){
+                    scheduledMeal.update(mapCmd.get(scheduledMeal.getId()));
+                }
+            });
+        }
+
     }
-    public void addScheduledMeal(ScheduledMeal scheduledMeal){
+
+    public void addScheduledMeal(ScheduledMeal scheduledMeal) {
         scheduledMeal.setDailyPlan(this);
         this.scheduledMeals.add(scheduledMeal);
-    }
-    public void updateDailyPlan(UpdateDailyPlanCommand command){
-        this.weekDay = command.weekDay() == null ? this.weekDay : command.weekDay();
-        this.scheduledMeals = command.scheduledMeals() == null ? this.scheduledMeals : command.scheduledMeals();
-    }
-    public void deleteScheduledMeal(TimeDay timeday){
-        this.scheduledMeals.removeIf(scheduledMeal -> scheduledMeal.getTimeDay().equals(timeday));
     }
 
 

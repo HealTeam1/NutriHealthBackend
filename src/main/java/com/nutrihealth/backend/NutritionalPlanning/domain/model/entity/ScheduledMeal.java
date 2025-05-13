@@ -2,8 +2,9 @@ package com.nutrihealth.backend.NutritionalPlanning.domain.model.entity;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
-import com.nutrihealth.backend.NutritionalPlanning.Interfaces.rest.resources.ScheduledMeals.CreateScheduledMealResource;
+import com.nutrihealth.backend.NutritionalPlanning.domain.model.commands.PlannedFoodsCommands.UpdatePlannedFoodCommand;
 import com.nutrihealth.backend.NutritionalPlanning.domain.model.commands.ScheduledMealCommands.CreateScheduledMealCommand;
+import com.nutrihealth.backend.NutritionalPlanning.domain.model.commands.ScheduledMealCommands.UpdateScheduledMealCommand;
 import com.nutrihealth.backend.NutritionalPlanning.domain.model.valueobjects.TimeDay;
 import jakarta.persistence.*;
 import lombok.Getter;
@@ -11,6 +12,9 @@ import lombok.Setter;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
+
+import static java.util.stream.Collectors.toMap;
 
 @Entity
 @Getter
@@ -37,21 +41,39 @@ public class ScheduledMeal {
     @JsonManagedReference
     private List<PlannedFood> plannedFoods = new ArrayList<>();
 
-    protected ScheduledMeal() {}
+    protected ScheduledMeal() {
+    }
 
     public ScheduledMeal(CreateScheduledMealCommand command) {
         this.recipeId = command.recipeId() == null ? null : command.recipeId();
         this.timeDay = command.timeDay();
-        if(command.plannedFoods() != null){
-            for(PlannedFood plannedFood : command.plannedFoods()){
-                this.plannedFoods.add(plannedFood);
-                plannedFood.setScheduledMeal(this);
-            }
+        if (command.plannedFoods() != null) {
+            command.plannedFoods().forEach(
+                    cmd -> {
+                        PlannedFood plannedFood = new PlannedFood(cmd);
+                        addPlannedFood(plannedFood);
+                    });
+        }
+    }
+    public void update(UpdateScheduledMealCommand command) {
+        //this.timeDay= command.timeDay() == null ? this.timeDay : command.timeDay();
+        this.recipeId = command.recipeFood() == null ? this.recipeId : command.recipeFood();
+        if (plannedFoods != null) {
+            Map<Long, UpdatePlannedFoodCommand> mapCmd = command.plannedFoods().stream()
+                    .filter(c -> c.foodId() != null)
+                    .collect(toMap(c -> c.foodId(), c -> c));
+
+            this.plannedFoods.forEach(plannedFood -> {
+                        if (mapCmd.containsKey(plannedFood.getId())) {
+                            plannedFood.update(mapCmd.get(plannedFood.getId()));
+                        }
+                    }
+            );
         }
     }
 
 
-    public void addPlannedFood(PlannedFood plannedFood){
+    public void addPlannedFood(PlannedFood plannedFood) {
         plannedFood.setScheduledMeal(this);
         this.plannedFoods.add(plannedFood);
     }

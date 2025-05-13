@@ -1,6 +1,5 @@
-package com.nutrihealth.backend.NutritionalPlanning.Interfaces.rest.resources.ScheduledMeals;
+package com.nutrihealth.backend.NutritionalPlanning.Interfaces.rest.resources.create;
 
-import com.nutrihealth.backend.NutritionalPlanning.Interfaces.rest.resources.PlannedFoods.CreatePlannedFoodResource;
 import com.nutrihealth.backend.NutritionalPlanning.domain.model.valueobjects.TimeDay;
 
 import java.util.List;
@@ -10,5 +9,4 @@ public record CreateScheduledMealResource(
         Long recipeId,
         List<CreatePlannedFoodResource> plannedFoods
 ) {
-
 }
