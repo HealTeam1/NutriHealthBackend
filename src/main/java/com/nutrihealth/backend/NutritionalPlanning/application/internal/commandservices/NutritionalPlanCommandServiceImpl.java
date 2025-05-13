@@ -1,6 +1,7 @@
 package com.nutrihealth.backend.NutritionalPlanning.application.internal.commandservices;
 
 import com.nutrihealth.backend.NutritionalPlanning.Infrastructure.persistence.jpa.repositories.NutritionalPlanRepository;
+import com.nutrihealth.backend.NutritionalPlanning.Infrastructure.persistence.jpa.repositories.PlannedFoodRepository;
 import com.nutrihealth.backend.NutritionalPlanning.Infrastructure.persistence.jpa.repositories.ScheduledMealRepository;
 import com.nutrihealth.backend.NutritionalPlanning.domain.model.aggregates.NutritionalPlan;
 import com.nutrihealth.backend.NutritionalPlanning.domain.model.commands.DailyPlanCommands.CreateDailyPlanCommand;
@@ -8,6 +9,7 @@ import com.nutrihealth.backend.NutritionalPlanning.domain.model.commands.Nutriti
 import com.nutrihealth.backend.NutritionalPlanning.domain.model.commands.NutritionPlanCommands.DeleteNutritionalPlanCommand;
 import com.nutrihealth.backend.NutritionalPlanning.domain.model.commands.NutritionPlanCommands.UpdateNutritionalPlanCommand;
 import com.nutrihealth.backend.NutritionalPlanning.domain.model.commands.PlannedFoodsCommands.CreatePlannedFoodCommand;
+import com.nutrihealth.backend.NutritionalPlanning.domain.model.commands.PlannedFoodsCommands.DeletePlannedFoodCommand;
 import com.nutrihealth.backend.NutritionalPlanning.domain.model.commands.ScheduledMealCommands.UpdateRecipeCommand;
 import com.nutrihealth.backend.NutritionalPlanning.domain.model.commands.ScheduledMealCommands.UpdateScheduledMealCommand;
 import com.nutrihealth.backend.NutritionalPlanning.domain.model.entity.DailyPlan;
@@ -22,11 +24,13 @@ import java.util.Optional;
 public class NutritionalPlanCommandServiceImpl implements NutritionalPlanCommandService {
     private final NutritionalPlanRepository repository;
     private final ScheduledMealRepository repositoryMeal;
+    private final PlannedFoodRepository repositoryFood;
 
-    public NutritionalPlanCommandServiceImpl(NutritionalPlanRepository repository, ScheduledMealRepository repositoryMeal) {
+    public NutritionalPlanCommandServiceImpl(NutritionalPlanRepository repository, ScheduledMealRepository repositoryMeal, PlannedFoodRepository repositoryFood) {
 
         this.repository = repository;
         this.repositoryMeal = repositoryMeal;
+        this.repositoryFood = repositoryFood;
     }
 
     @Override
@@ -94,6 +98,15 @@ public class NutritionalPlanCommandServiceImpl implements NutritionalPlanCommand
         scheduledMeal.get().addPlannedFood(plannedFood);
         repositoryMeal.save(scheduledMeal.get());
         return Optional.of(plannedFood);
+    }
+
+    @Override
+    public void handle(DeletePlannedFoodCommand command) {
+        Optional<PlannedFood> plannedFood = repositoryFood.findById(command.id());
+        if (plannedFood.isEmpty()) {
+            throw new IllegalArgumentException("No such PlannedFood");
+        }
+        repositoryFood.delete(plannedFood.get());
     }
 
 

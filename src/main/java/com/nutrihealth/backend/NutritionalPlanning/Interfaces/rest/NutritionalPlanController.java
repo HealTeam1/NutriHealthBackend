@@ -15,6 +15,7 @@ import com.nutrihealth.backend.NutritionalPlanning.application.internal.queryser
 import com.nutrihealth.backend.NutritionalPlanning.domain.model.aggregates.NutritionalPlan;
 import com.nutrihealth.backend.NutritionalPlanning.domain.model.commands.NutritionPlanCommands.DeleteNutritionalPlanCommand;
 import com.nutrihealth.backend.NutritionalPlanning.domain.model.commands.NutritionPlanCommands.UpdateNutritionalPlanCommand;
+import com.nutrihealth.backend.NutritionalPlanning.domain.model.commands.PlannedFoodsCommands.DeletePlannedFoodCommand;
 import com.nutrihealth.backend.NutritionalPlanning.domain.model.commands.ScheduledMealCommands.UpdateRecipeCommand;
 import com.nutrihealth.backend.NutritionalPlanning.domain.model.entity.PlannedFood;
 import com.nutrihealth.backend.NutritionalPlanning.domain.model.queries.GetAllNutritionalPlanByUserIdQuery;
@@ -85,5 +86,10 @@ public class NutritionalPlanController {
         var plannedFood = commandService.handle(CreatePlannedFoodCommandFromResourceAssembler.toCommand(resource),scheduledMealId).get();
         return new ResponseEntity<>(PlannedFoodResourceFromEntityAssembler.toResource(plannedFood), CREATED);
     }
-
+    @DeleteMapping("/plannedFood/{id}")
+    public ResponseEntity<Void> deletePlannedFood(@PathVariable Long id){
+        var cmd = new DeletePlannedFoodCommand(id);
+        commandService.handle(cmd);
+        return new ResponseEntity<>(HttpStatus.ACCEPTED);
+    }
 }
